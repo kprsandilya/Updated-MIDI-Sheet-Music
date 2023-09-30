@@ -20,8 +20,8 @@ function NavBar() {
           <div className="text-sm lg:flex-grow space-x-6">
             <Link to="/"> Home </Link>
             <Link to="/about"> About </Link>
-            <Link to="./components/Applicaiton.js"> Application </Link>
-            <Link to="./components/Support.js"> Support Us! </Link>
+            <Link to="/application"> Application </Link>
+            <Link to="/support"> Support Us! </Link>
           </div>
         </div>
       </nav>
