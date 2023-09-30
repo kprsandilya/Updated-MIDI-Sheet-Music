@@ -3,21 +3,21 @@ import '../App.css';
 import "../input.css";
 import NavBar from "./NavBar.js";
 
-function Thanks() {
-    return(
-        <div className="w-full h-48 flex flex-initial justify-center">
-            <p>https://hypercolor.dev/</p>
-        </div>
-    );
+function About() {
+  return(
+      <div className="w-full h-48 flex flex-initial justify-center">
+          This is the about
+      </div>
+  );
 }
   
-function About(){
+function Body(){
   return (
     <>
       <NavBar/>
-      <Thanks/>
+      <About/>
     </>
   );
 };
   
-export default About;
+export default Body;
