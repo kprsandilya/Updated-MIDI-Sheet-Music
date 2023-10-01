@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 function NavBar() {
     return (
       <>
-      <nav className="flex items-center justify-between flex-wrap bg-slate-400 p-4 h-18">
+      <nav className="flex items-center justify-between flex-wrap bg-slate-400 p-4 h-18 sticky top-0 z-50">
         <div className="flex items-center flex-shrink-0 text-white mr-6">
           <img src={MIDILogo} alt="MIDI Logo" class="fill-current h-12 w-12 mr-2" width="54" height="54" viewBox="0 0 54 54"/>
           <span className="font-semibold text-xl tracking-tight">MIDI Sheet Music</span>

@@ -2,6 +2,7 @@ import React from "react";
 import '../App.css';
 import "../input.css";
 import NavBar from "./NavBar.js";
+import Footer from "./Footer.js";
 
 function About() {
   return(
@@ -15,7 +16,10 @@ function Body(){
   return (
     <>
       <NavBar/>
-      <About/>
+      <div className="bg-gradient-to-b from-gray-900 to-gray-600 bg-gradient-to-r pb-12">
+        <About/>
+        <Footer/>
+      </div>
     </>
   );
 };
