@@ -6,9 +6,14 @@ import Footer from "./Footer.js";
 
 function Acknowledgements() {
     return(
+      <>
         <div className="w-full h-48 flex flex-initial justify-center">
-            <p>https://hypercolor.dev/</p>
+          <p>https://hypercolor.dev/</p>  
         </div>
+        <div className="w-full h-48 flex flex-initial justify-center">
+          <p>https://heropatterns.com/</p>
+        </div>
+      </>
     );
 }
   

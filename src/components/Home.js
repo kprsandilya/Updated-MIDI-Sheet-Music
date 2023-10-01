@@ -6,9 +6,9 @@ import MIDILogo from "../Harp MIDI Logo.svg";
 
 function First() {
     return(
-        <div className="flex flex-row pt-12">
+        <div className="flex flex-row flex-grow pt-12">
             <div className="w-1/12"></div>
-            <div className="h-64 bg-slate-400 w-5/6">
+            <div className="diamonds h-64 bg-[#DFDBE5] w-5/6">
                 <div className="w-full flex flex-initial place-content-center pt-12">
                     <div className="">
                         <img src={MIDILogo} alt="MIDI Logo" class="fill-current h-24 w-24 mr-2" width="36" height="36"/>
@@ -41,7 +41,7 @@ function Second() {
                 <div className="text-center mx-4 space-y-2">
                     <h2 className="text-black text-4xl font-bold">
                         MIDI Sheet Music
-                    </h2>
+                    </h2> 
                     <b>Create Sheet Music Instantly</b>
                 </div>
             </div>
