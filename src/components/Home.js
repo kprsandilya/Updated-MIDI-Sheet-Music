@@ -10,7 +10,7 @@ function First() {
         <div className="flex flex-row flex-grow pt-12">
             <div className="w-1/12"></div>
             <div className="h-64 w-5/6">
-                <HeroPattern pttrn={'clouds-pattern'}>
+                <HeroPattern pttrn={'clouds-pattern'} >
                     <div className="w-full flex flex-initial place-content-center pt-12">
                         <div className="">
                             <img src={MIDILogo} alt="MIDI Logo" class="fill-current h-24 w-24 mr-2" width="36" height="36"/>

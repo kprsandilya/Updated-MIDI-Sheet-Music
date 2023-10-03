@@ -6,6 +6,7 @@ import About from "./components/About.js";
 import Home from "./components/Home.js";
 import Acknowledgements from "./components/Acknowledgements.js";
 import Application from "./components/Application.js";
+import ProfileSettings from "./components/User/Settings.js";
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/about" element={<About/>}/>
         <Route path="/acknowledgements" element={<Acknowledgements/>}/>
         <Route path="/application" element={<Application/>}/>
+        <Route path="/profile/settings" element={<ProfileSettings/>}/>
       </Routes>
     </div>
   );
