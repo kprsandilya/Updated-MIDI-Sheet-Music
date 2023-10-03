@@ -3,9 +3,9 @@ import '../App.css';
 import "../input.css";
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
+import HeroPattern from "./HeroPattern.js";
 import { useState } from 'react';
 import * as Tone from 'tone';
-import axios from 'axios';
 const { Midi } = require('@tonejs/midi');
 const synth = new Tone.Synth().toDestination();
 
@@ -32,48 +32,53 @@ function AudioButton() {
   );
 }
 
-const UploadFile = () => {
-   const [selectedFile, setSelectedFile] = useState(null);
+function FileUploadPage(){
+	const [selectedFile, setSelectedFile] = useState();
+	const [isSelected, setIsSelected] = useState(false);
 
-   const handleFileUpload = (event) => {
-     setSelectedFile(event.target.files[0]);
-   };
+	const changeHandler = (event) => {
+		setSelectedFile(event.target.files[0]);
+		setIsSelected(true);
+	};
 
-   const handleUpload = () => {
-     const formData = new FormData();
-     formData.append('file', selectedFile);
-     axios.post('/api/upload', formData)
-       .then((response) => {
-         console.log(response.data);
-       })
-       .catch((error) => {
-         console.log(error);
-       });
-   };
+	const handleSubmission = () => {
+    console.log(selectedFile);
+	};
 
-   return(
-     <div>
-       <input type="file" onChange={handleFileUpload} />
-       <button onClick={handleUpload}>
-        Upload
-      </button>
-     </div>
-   );
-};
+	return(
+   <div className="flex flex-row">
+			<input type="file" name="file" accept='.midi, .mid' onChange={changeHandler}/>
+			{isSelected ? (
+				<div className=""></div>
+			) : (
+				<p></p>
+			)}
+			<div className=" pl-8 pt-[3px]">
+				<button onClick={handleSubmission}>Submit</button>
+			</div>
+		</div>
+	)
+}
 
 function Application() {
   return(
-    <>
-      <div className="w-full h-16 pt-6 flex flex-initial justify-center">
-        <h1 className="text-xl">React File Upload</h1>
+    <div className="flex flex-row">
+      <div className="w-1/6"></div>
+      <div className="text-slate-600 w-2/3">
+        <div className="h-8"></div>
+        <HeroPattern pttrn={'topography-pattern'}>
+          <div className="w-full h-24 pt-12 flex flex-initial justify-center">
+            <h1 className="text-xl">React File Upload</h1>
+          </div>
+          <div className="w-full h-24 flex flex-initial justify-center">
+            <FileUploadPage/>
+          </div>
+        </HeroPattern>
+        <div className="w-full h-64 flex flex-initial justify-center">
+        </div>
       </div>
-      <div className="w-full h-64 flex flex-initial justify-center">
-        <UploadFile/>
-      </div>
-      <div className="w-full h-64 flex flex-initial justify-center">
-          <AudioButton/>
-      </div>
-    </>
+      <div className="w-1/6"></div>
+    </div>
   );
 }
   
