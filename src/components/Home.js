@@ -30,30 +30,6 @@ function First() {
     );
 }
 
-function Second() {
-    return(
-        <div className="flex flex-row pt-8">
-            <div className="w-1/6"></div>
-            <div className="h-48 bg-slate-400 w-2/3">
-                <div className="w-full flex flex-initial place-content-center pt-4">
-                    <div className="">
-                        <img src={MIDILogo} alt="MIDI Logo" class="fill-current h-24 w-24 mr-2" width="24" height="24"/>
-                    </div>
-                    
-                </div>
-                <div className="text-center mx-4 space-y-2">
-                    <h2 className="text-black text-4xl font-bold">
-                        MIDI Sheet Music
-                    </h2> 
-                    <b>Create Sheet Music Instantly</b>
-                </div>
-            </div>
-            <div className="w-1/6"></div>
-        </div>
-        
-    );
-}
-
 function Home() {
     return(
         <>
