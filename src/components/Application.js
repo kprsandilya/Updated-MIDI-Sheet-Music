@@ -3,7 +3,9 @@ import '../App.css';
 import "../input.css";
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
+import { useState } from 'react';
 import * as Tone from 'tone';
+import axios from 'axios';
 const { Midi } = require('@tonejs/midi');
 const synth = new Tone.Synth().toDestination();
 
@@ -30,15 +32,53 @@ function AudioButton() {
   );
 }
 
+const UploadFile = () => {
+   const [selectedFile, setSelectedFile] = useState(null);
+
+   const handleFileUpload = (event) => {
+     setSelectedFile(event.target.files[0]);
+   };
+
+   const handleUpload = () => {
+     const formData = new FormData();
+     formData.append('file', selectedFile);
+     axios.post('/api/upload', formData)
+       .then((response) => {
+         console.log(response.data);
+       })
+       .catch((error) => {
+         console.log(error);
+       });
+   };
+
+   return(
+     <div>
+       <input type="file" onChange={handleFileUpload} />
+       <button onClick={handleUpload}>
+        Upload
+      </button>
+     </div>
+   );
+};
+
 function Application() {
-    return(
-        <div className="w-full h-1/2 flex flex-initial justify-center">
-            <AudioButton/>
-        </div>
-    );
+  return(
+    <>
+      <div className="w-full h-16 pt-6 flex flex-initial justify-center">
+        <h1 className="text-xl">React File Upload</h1>
+      </div>
+      <div className="w-full h-64 flex flex-initial justify-center">
+        <UploadFile/>
+      </div>
+      <div className="w-full h-64 flex flex-initial justify-center">
+          <AudioButton/>
+      </div>
+    </>
+  );
 }
   
 function Body(){
+  
   return (
     <>
       <NavBar/>
