@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function Footer() {
     return (
       <>
-      <div className="w-full h-72 pb-12 pl-40 pt-24 text-slate-400">
+      <div className="w-full h-72 pb-12 pl-40 pt-24 text-slate-400 border-t-4 border-transparent">
             <div className="grid grid-cols-5">
                 <div className="flex flex-col">
                     <h1 className="text-xl">Purdue Launchpad 2023-24</h1>

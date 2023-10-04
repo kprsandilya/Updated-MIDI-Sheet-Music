@@ -14,10 +14,10 @@ function SettingButton({words}){
         <div className="w-1/12 bg-transparent"></div>
         <div className="w-5/6 h-20 pt-4 place-content-center text-16 text-white bg-transparent">
         <Tabs className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 text-white">
-      <TabList>
-        <Tab className="hover:bg-slate-700">Tab 1</Tab>
-        <Tab className="hover:bg-slate-700">Tab 2</Tab>
-        <Tab className="hover:bg-slate-700">Tab 3</Tab>
+      <TabList className="">
+        <Tab className="hover:bg-slate-700 h-12 pt-3 rounded-xl pl-4">Tab 1</Tab>
+        <Tab className="hover:bg-slate-700 h-12 pt-3 rounded-xl pl-4">Tab 2</Tab>
+        <Tab className="hover:bg-slate-700 h-12 pt-3 rounded-xl pl-4">Tab 3</Tab>
       </TabList>
       <TabPanel>
         <p>Tab 1 works!</p>
@@ -38,33 +38,12 @@ function SettingButton({words}){
 
 function UserSettings() {
   return(
-      <div className="w-1/3 h-screen flex flex-initial flex-col bg-black">
+      <div className="w-1/3 h-screen flex flex-initial flex-col bg-gradient-to-r from-gray-700 via-gray-900 to-black">
         <div className="bg-slate-600 flex flex-row">
           <div className="w-full h-20 pt-4 place-content-center text-2xl">Profile Settings</div>
         </div>
         <SettingButton words="What"/>
       </div>
-  );
-}
-
-function TabSettings() {
-  return(
-    <Tabs className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 text-white">
-      <TabList>
-        <Tab>Tab 1</Tab>
-        <Tab>Tab 2</Tab>
-        <Tab>Tab 3</Tab>
-      </TabList>
-      <TabPanel>
-        <p>Tab 1 works!</p>
-      </TabPanel>
-      <TabPanel>
-        <p>Tab 2 works!</p>
-      </TabPanel>
-      <TabPanel>
-        <p>Tab 3 works!</p>
-      </TabPanel>
-  </Tabs>
   );
 }
   
