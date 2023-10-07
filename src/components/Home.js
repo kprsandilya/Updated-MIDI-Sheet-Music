@@ -13,7 +13,7 @@ function First() {
                 <HeroPattern pttrn={'clouds-pattern'} >
                     <div className="w-full flex flex-initial place-content-center pt-12">
                         <div className="">
-                            <img src={MIDILogo} alt="MIDI Logo" class="fill-current h-24 w-24 mr-2" width="36" height="36"/>
+                            <img src={MIDILogo} alt="MIDI Logo" className="fill-current h-24 w-24 mr-2" width="36" height="36"/>
                         </div>
                         
                     </div>
