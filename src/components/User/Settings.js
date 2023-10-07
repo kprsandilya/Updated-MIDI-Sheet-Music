@@ -6,6 +6,27 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import NavBar from "../NavBar.js";
 import Footer from "../Footer.js";
 
+function TabReturn() {
+  return(
+  <Tabs className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 text-white">
+      <TabList className="">
+        <Tab className="hover:bg-slate-700 h-20 pt-6 rounded-2xl pl-4 text-xl">Tab 1</Tab>
+        <Tab className="hover:bg-slate-700 h-20 pt-6 rounded-2xl pl-4 text-xl">Tab 2</Tab>
+        <Tab className="hover:bg-slate-700 h-20 pt-6 rounded-2xl pl-4 text-xl" >Tab 3</Tab>
+      </TabList>
+      <TabPanel>
+          1
+      </TabPanel>
+      <TabPanel>
+          2
+      </TabPanel>
+      <TabPanel>
+          3
+      </TabPanel>
+    </Tabs>
+  );
+}
+
 function SettingButton({words}){
   return(
     <>
@@ -13,22 +34,7 @@ function SettingButton({words}){
       <div className="flex flex-row">
         <div className="w-1/12 bg-transparent"></div>
         <div className="w-5/6 h-20 pt-4 place-content-center text-16 text-white bg-transparent">
-        <Tabs className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 text-white">
-      <TabList className="">
-        <Tab className="hover:bg-slate-700 h-12 pt-3 rounded-xl pl-4">Tab 1</Tab>
-        <Tab className="hover:bg-slate-700 h-12 pt-3 rounded-xl pl-4">Tab 2</Tab>
-        <Tab className="hover:bg-slate-700 h-12 pt-3 rounded-xl pl-4">Tab 3</Tab>
-      </TabList>
-      <TabPanel>
-        <p>Tab 1 works!</p>
-      </TabPanel>
-      <TabPanel>
-        <p>Tab 2 works!</p>
-      </TabPanel>
-      <TabPanel>
-        <p>Tab 3 works!</p>
-      </TabPanel>
-  </Tabs>
+          <TabReturn/>
         </div>
         <div className="w-1/12 bg-transparent"></div>
       </div>
@@ -38,12 +44,17 @@ function SettingButton({words}){
 
 function UserSettings() {
   return(
-      <div className="w-1/3 h-screen flex flex-initial flex-col bg-gradient-to-r from-gray-700 via-gray-900 to-black">
+    <div className="flex flex-row">
+      <div className="w-1/3 h-screen flex flex-initial flex-col bg-gradient-to-t from-gray-600 via-gray-900 to-black">
         <div className="bg-slate-600 flex flex-row">
-          <div className="w-full h-20 pt-4 place-content-center text-2xl">Profile Settings</div>
+          <div className="w-full h-20 pt-4 place-content-center text-2xl pl-4">Profile Settings</div>
         </div>
         <SettingButton words="What"/>
       </div>
+      <div className="w-2/3 h-screen flex flex-initial flex-col bg-gradient-to-t from-gray-600 via-gray-900 to-black">
+        
+      </div>
+    </div>
   );
 }
   
