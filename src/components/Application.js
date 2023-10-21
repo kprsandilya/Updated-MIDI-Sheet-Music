@@ -6,65 +6,210 @@ import Footer from "./Footer.js";
 import HeroPattern from "./HeroPattern.js";
 import { useState } from 'react';
 import * as Tone from 'tone';
-import { parseArrayBuffer } from 'midi-json-parser';
 const { Midi } = require('@tonejs/midi');
-const synth = new Tone.Synth().toDestination();
+var totalJSON;
+var totalSynths = [];
+var indSynths = [];
 
-//Upload a MIDI Track
-//Visualize a MIDI Track
-//  User Chooses from tracks on screen
-//  Software determines compatability
-
-/*1) Figuring out uploading a midi track to the page, we can work with one file for now, and worry about firebase or some database later
-2) After uploading, we want to visualize the midi track and user can select the tracks that are compatible with converting to sheet music*/
+//Long Term
+//10/24
 
 //This week
-//Upload Midi and display its json on screen
-//Button for audio
+//Figure out ToneJS JSON Converter
+//Display those tracks on screen
+//User can play any track
+//User can pick one
+//All completed 10/15/2023 4:28PM
+//Happy Birthday to ME!
 
-function AudioButton() {
-  function audio() {
-    synth.triggerAttackRelease("C4", "8n");
+function TotalPlay({currentMidi, noPlay}) {
+  function handleClick() {
+    if (noPlay === 0 && currentMidi) {
+      noPlay = 1;
+      const now = Tone.now() + 0.5;
+      currentMidi.tracks.forEach((track) => {
+        //create a synth for each track
+        const synth = new Tone.PolySynth(Tone.Synth, {
+          envelope: {
+            attack: 0.02,
+            decay: 0.1,
+            sustain: 0.3,
+            release: 1,
+          },
+        }).toDestination();
+        totalSynths.push(synth);
+        //schedule all of the events
+        track.notes.forEach((note) => {
+          synth.triggerAttackRelease(
+            note.name,
+            note.duration,
+            note.time + now,
+            note.velocity
+          );
+        });
+      });
+    } else {
+      noPlay = 0;
+      //dispose the synth and make a new one
+      while (totalSynths.length) {
+        const synth = totalSynths.shift();
+        synth.disconnect();
+      }
+    }
   }
+  
   return(
-    <button onClick={audio}>
-      Play sound!
-    </button>
-  );
+    <div className="flex flex-row">
+        <div className="justify-center pt-1">
+          <button onClick={handleClick} className="bg-blue-500 hover:bg-blue-700 w-full text-white font-bold py-2 px-4 rounded">Play</button>
+        </div>
+      </div>
+    )
+}
+
+function PlaySound({currentMidi, noPlay}) {
+  const synths = [];
+  function handleClick() {
+    if (noPlay === 0 && currentMidi) {
+      noPlay = 1;
+      const now = Tone.now() + 0.5;
+      //create a synth for each track
+      const synth = new Tone.PolySynth(Tone.Synth, {
+        envelope: {
+          attack: 0.02,
+          decay: 0.1,
+          sustain: 0.3,
+          release: 1,
+        },
+      }).toDestination();
+      synths.push(synth);
+      //schedule all of the events
+      currentMidi.notes.forEach((note) => {
+        synth.triggerAttackRelease(
+          note.name,
+          note.duration,
+          note.time + now,
+          note.velocity
+        );
+      });
+      indSynths.push(synths);
+    } else {
+      noPlay = 0;
+      //dispose the synth and make a new one
+      while (synths.length) {
+        const synth = synths.shift();
+        synth.disconnect();
+      }
+    }
+  }
+
+  return(
+    <div className="flex flex-row w-full">
+       <div className="justify-center w-full pt-1">
+         <button onClick={handleClick} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Play</button>
+       </div>
+     </div>
+   )
 }
 
 function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON }){
-	const [isSelected, setIsSelected] = useState(false);
+
+  const [showResults, setShowResults] = React.useState(false);
 
 	const changeHandler = (event) => {
 		setSelectedFile(event.target.files[0]);
-		setIsSelected(true);
 	};
 
   const handleFileChange = (event) => {
     if (selectedFile) {
+      setShowResults(true);
       const reader = new FileReader();
       reader.onload = () => {
-        const arrayBuffer = reader.result;
-        parseArrayBuffer(arrayBuffer).then((json) => {
-          // json is the JSON representation of the MIDI file.
-          console.log(json); // You can do something with the parsed MIDI data here.
-          setFileJSON(json);
-        });
+        const midi = new Midi(reader.result);
+        totalJSON = new Midi(reader.result);
+        const midiTracks = [];
+        for (var i = 0; i < midi.tracks.length; i++) {
+          const mergedObject = {
+            ...midi.header,
+            ...midi.tracks[i]
+          };
+          midiTracks.push(mergedObject);
+        }
+        setFileJSON(midiTracks);
       };
       reader.readAsArrayBuffer(selectedFile);
+    } else {
+      setShowResults(false);
+      setFileJSON(undefined);
+      while (totalSynths.length) {
+        const synth = totalSynths.shift();
+        synth.disconnect();
+      }
+      for (var i = 0; i < indSynths.length; i++) {
+        while (indSynths[i].length) {
+          const synth = indSynths[i].shift();
+          synth.disconnect();
+        }
+      }
     }
   };
 
 	return(
-   <div className="flex flex-row">
-			<input type="file" name="file" accept='.midi, .mid' onChange={changeHandler}/>
-			<div className="h-8 pl-8 pt-[3px]">
-				<button onClick={handleFileChange}>Submit</button>
-			</div>
-		</div>
+    <div className="flex flex-col">
+      <div className="flex flex-row">
+        <input type="file" name="file" accept='.midi, .mid' onChange={changeHandler}/>
+        <div className="h-8 pl-8 pt-[3px]">
+          <button onClick={handleFileChange}>Submit</button>
+        </div>
+      </div>
+      <div className="flex flex-row w-full">
+        <div className="w-5/12"></div>
+        <div className="w-1/6">
+          { showResults ? <TotalPlay currentMidi={totalJSON} noPlay={0}></TotalPlay> : null }
+        </div>
+        <div className="w-5/12"></div>
+      </div>
+    </div>
 	)
 }
+
+function ReturnDivs({fileJSON}) {
+  const generateKey = (pre) => {
+    console.log(`${ pre }_${ new Date().getTime() }`);
+    return `${ pre }_${ new Date().getTime() }_${Math.random()}`;
+  }
+  var listItems = (
+    <>
+      <div className="w-full h-16 flex flex-initial justify-center"></div>
+      <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
+        <pre className="w-full flex flex-initial"></pre>
+      </div>
+    </>
+  );
+  if (fileJSON !== undefined) {
+    listItems = fileJSON.map((track) =>
+      <div key={generateKey(track.channel)}>
+        <div  className="w-full h-16 flex flex-initial justify-center"></div>
+        <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
+          <pre className="w-full flex flex-initial">{JSON.stringify(track, null, 2)}</pre>
+        </div>
+        <div className="flex flex-row">
+          <div className="w-5/12"></div>
+          <div className="w-1/6">
+            <PlaySound currentMidi={track} noPlay={0}/>
+          </div>
+          <div className="w-5/12"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {listItems}
+    </div>
+  );
+};
 
 function Application({ selectedFile, setSelectedFile, fileJSON, setFileJSON }) {
   return(
@@ -81,10 +226,7 @@ function Application({ selectedFile, setSelectedFile, fileJSON, setFileJSON }) {
           </div>
           <div className="h-16"></div>
         </HeroPattern>
-        <div className="w-full h-16 flex flex-initial justify-center"></div>
-        <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
-          <pre className="w-full flex flex-initial">{JSON.stringify(fileJSON, null, 2)}</pre>
-        </div>
+        <ReturnDivs fileJSON={fileJSON}/>
       </div>
       <div className="w-1/6"></div>
     </div>
