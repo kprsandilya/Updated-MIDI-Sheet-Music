@@ -6,6 +6,7 @@ import Footer from "./Footer.js";
 import HeroPattern from "./HeroPattern.js";
 import { useState } from 'react';
 import * as Tone from 'tone';
+import MidiVisualizer from "./MidiVisualizer.js";
 const { Midi } = require('@tonejs/midi');
 var totalJSON;
 var totalSynths = [];
@@ -15,12 +16,9 @@ var indSynths = [];
 //10/24
 
 //This week
-//Figure out ToneJS JSON Converter
-//Display those tracks on screen
-//User can play any track
-//User can pick one
-//All completed 10/15/2023 4:28PM
-//Happy Birthday to ME!
+//Visualize Midi tracks
+//Pause, forward, stop, ui interface
+//Presentation on tehe 24th
 
 function TotalPlay({currentMidi, noPlay}) {
   function handleClick() {
@@ -191,7 +189,8 @@ function ReturnDivs({fileJSON}) {
       <div key={generateKey(track.channel)}>
         <div  className="w-full h-16 flex flex-initial justify-center"></div>
         <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
-          <pre className="w-full flex flex-initial">{JSON.stringify(track, null, 2)}</pre>
+          {/*<pre className="w-full flex flex-initial">{JSON.stringify(track, null, 2)}</pre>*/}
+          <MidiVisualizer track={track}/>
         </div>
         <div className="flex flex-row">
           <div className="w-5/12"></div>
