@@ -1,50 +1,69 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as mm from '@magenta/music';
-import * as Tone from 'tone';
-const { Midi } = require('@tonejs/midi');
+import * as ssv from './staff_svg_visualizer.ts';
+import { Midi } from '@tonejs/midi';
 
-const MidiStaffVisualizer = ({ track }) => {
-    useEffect(() => {
-        if (!track || !track.notes || track.notes.length === 0) {
-            console.error("Invalid track data");
-            return;
-        }
+const MidiTrackVisualizer = ({ midiFile }) => {
 
-        const timeSignature = track.timeSignatures && track.timeSignatures.length > 0
-            ? track.timeSignatures[0].timeSignature[0]
-            : 4; // Default to 4/4 time signature if not provided
+  // Convert Tone.js MIDI data to a Magenta NoteSequence manually
+  const noteSequence = new mm.NoteSequence();
+  const { header, tracks } = tonejsMidi;
+  var ticksPerQuarter = 4;
+  if (header.ticksPerBeat != null) {
+    ticksPerQuarter = header.ticksPerBeat;
+  }
+  const quarterToSixteenth = 4;
 
-        const midi = new Midi();
-        const midiTrack = midi.addTrack();
-        track.notes.forEach((note) => {
-            const { pitch, duration, time } = note;
-            midiTrack.addNote({ midi: Tone.Frequency(pitch).toMidi(), time, duration });
-        });
+  // Initialize quantizationInfo with default values
+  noteSequence.quantizationInfo = {
+    stepsPerQuarter: 4,
+    qpm: 120,
+  };
 
-        const quantizedSequence = mm.sequences.quantizeNoteSequence(midiTrack, timeSignature);
+  tracks.forEach((track) => {
+    let currentTime = 0;
+    track.notes.forEach((note) => {
+      const pitch = note.midi;
+      const startTime = (note.ticks / ticksPerQuarter) * quarterToSixteenth;
+      const duration = (note.durationTicks / ticksPerQuarter) * quarterToSixteenth;
+      noteSequence.notes.push({
+        pitch,
+        startTime,
+        endTime: startTime + duration,
+        velocity: note.velocity,
+      });
+      currentTime = Math.max(currentTime, startTime + duration);
+    });
+    noteSequence.totalTime = Math.max(noteSequence.totalTime, currentTime);
+  });
 
-        if (quantizedSequence.totalQuantizedSteps <= 0) {
-            console.error("Invalid totalQuantizedSteps");
-            return;
-        }
+  // Set totalQuantizedSteps and totalTime
+  noteSequence.totalQuantizedSteps = Math.floor(
+    (noteSequence.totalTime / 60) * noteSequence.quantizationInfo.stepsPerQuarter
+  );
 
-        async function visualizeMidi() {
-            const midiData = new Uint8Array(midi.toArray());
-            const decodedMidi = mm.midiToSequenceProto(midiData);
-            decodedMidi.totalQuantizedSteps = quantizedSequence.totalQuantizedSteps;
+  // Create outputNoteSequence in the desired format
+  const outputNoteSequence = {
+    notes: [],
+    tempos: [{ time: 0, qpm: 120 }], // Assuming default qpm is 120
+    keySignatures: [{ time: 0, key: 0 }], // Assuming default key is C major
+    timeSignatures: [{ time: 0, numerator: 4, denominator: 4 }], // Assuming default time signature is 4/4
+    totalTime: noteSequence.totalTime,
+  };
 
-            // Log quantized sequence for debugging
-            console.log("Quantized Sequence: ", decodedMidi);
+  noteSequence.notes.forEach((note) => {
+    const outputNote = {
+      pitch: note.pitch,
+      startTime: note.startTime,
+      endTime: note.endTime,
+      program: 0, // Assuming default program is 0
+      velocity: note.velocity,
+    };
+    outputNoteSequence.notes.push(outputNote);
+  });
 
-            // Create StaffSVGVisualizer
-            const visualizer = new mm.StaffSVGVisualizer(decodedMidi, document.body);
-            visualizer.draw();
-        }
-
-        visualizeMidi();
-    }, [track]);
-
-    return null;
+  console.log(outputNoteSequence);
+  return outputNoteSequence;
 };
 
-export default MidiStaffVisualizer;
+export default MidiTrackVisualizer;

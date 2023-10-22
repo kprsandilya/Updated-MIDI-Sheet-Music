@@ -4,13 +4,17 @@ import "../input.css";
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
 import HeroPattern from "./HeroPattern.js";
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import * as Tone from 'tone';
-import MidiVisualizer from "./MidiVisualizer.js";
+import * as mm from '@magenta/music';
+import MidiVisualizerComponent from "./staff_index.js";
 const { Midi } = require('@tonejs/midi');
+const fs = require('fs');
+
 var totalJSON;
 var totalSynths = [];
 var indSynths = [];
+var noteSequences = [];
 
 //Long Term
 //10/24
@@ -110,7 +114,7 @@ function PlaySound({currentMidi, noPlay}) {
    )
 }
 
-function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON }){
+function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, setNoteSequences, noteSequences }){
 
   const [showResults, setShowResults] = React.useState(false);
 
@@ -118,7 +122,7 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON }){
 		setSelectedFile(event.target.files[0]);
 	};
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     if (selectedFile) {
       setShowResults(true);
       const reader = new FileReader();
@@ -151,6 +155,85 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON }){
       }
     }
   };
+  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [outputNoteSequences, setOutputNoteSequences] = useState(null);
+
+  useEffect(() => {
+    async function fetchAndParseMIDIFile() {
+      try {
+        if (fileJSON != null) {
+          setNoteSequences((prevNoteSequences) => {
+            const newNoteSequences = [...prevNoteSequences];
+            fileJSON.forEach((track) => {
+              const parsedNoteSequence = parseMidiToNoteSequence(track);
+              newNoteSequences.push(parsedNoteSequence);
+            });
+            return newNoteSequences;
+          });
+  
+          // Update state to stop loading
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setError(error);
+        setLoading(false);
+      }
+    }
+  
+    fetchAndParseMIDIFile();
+  }, [fileJSON]);
+
+  const parseMidiToNoteSequence = (track) => {
+    const noteSequence = new mm.NoteSequence();
+    const { header } = track;
+    var ticksPerQuarter = 4;
+    // if (header.ticksPerBeat != null) {
+    //   ticksPerQuarter = header.ticksPerBeat;
+    // }
+    const quarterToSixteenth = 4;
+
+    noteSequence.quantizationInfo = {
+      stepsPerQuarter: 4,
+      qpm: 120,
+    };
+
+    let currentTime = 0;
+    track.notes.forEach((note) => {
+      const pitch = note.midi;
+      const startTime = (note.ticks / ticksPerQuarter) * quarterToSixteenth;
+      const duration = (note.durationTicks / ticksPerQuarter) * quarterToSixteenth;
+      noteSequence.notes.push({
+        pitch,
+        startTime,
+        endTime: startTime + duration,
+        velocity: note.velocity,
+      });
+      currentTime = Math.max(currentTime, startTime + duration);
+    });
+    noteSequence.totalTime = Math.max(noteSequence.totalTime, currentTime);
+
+    noteSequence.totalQuantizedSteps = Math.floor(
+      (noteSequence.totalTime / 60) * noteSequence.quantizationInfo.stepsPerQuarter
+    );
+
+    const outputNoteSequence = {
+      notes: noteSequence.notes.map((note) => ({
+        pitch: note.pitch,
+        startTime: note.startTime,
+        endTime: note.endTime,
+        program: 0, // Assuming default program is 0
+        velocity: note.velocity,
+      })),
+      tempos: [{ time: 0, qpm: 120 }], // Assuming default qpm is 120
+      keySignatures: [{ time: 0, key: 0 }], // Assuming default key is C major
+      timeSignatures: [{ time: 0, numerator: 4, denominator: 4 }], // Assuming default time signature is 4/4
+      totalTime: noteSequence.totalTime,
+    };
+    return outputNoteSequence;
+  };
 
 	return(
     <div className="flex flex-col">
@@ -158,6 +241,7 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON }){
         <input type="file" name="file" accept='.midi, .mid' onChange={changeHandler}/>
         <div className="h-8 pl-8 pt-[3px]">
           <button onClick={handleFileChange}>Submit</button>
+          {loading? <div>Loading...</div> : null}
         </div>
       </div>
       <div className="flex flex-row w-full">
@@ -171,26 +255,132 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON }){
 	)
 }
 
-function ReturnDivs({fileJSON}) {
+function MidiToNoteSequence({ midiFile, setNoteSequences }) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [outputNoteSequences, setOutputNoteSequences] = useState(null);
+
+  useEffect(() => {
+    async function fetchAndParseMIDIFile() {
+      try {
+        if (midiFile != null) {
+          setNoteSequences((prevNoteSequences) => {
+            const newNoteSequences = [...prevNoteSequences];
+            midiFile.forEach((track) => {
+              const parsedNoteSequence = parseMidiToNoteSequence(track);
+              newNoteSequences.push(parsedNoteSequence);
+            });
+            return newNoteSequences;
+          });
+  
+          // Update state to stop loading
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setError(error);
+        setLoading(false);
+      }
+    }
+  
+    fetchAndParseMIDIFile();
+  }, [midiFile]);
+
+  const parseMidiToNoteSequence = (track) => {
+    const noteSequence = new mm.NoteSequence();
+    const { header } = track;
+    var ticksPerQuarter = 4;
+    // if (header.ticksPerBeat != null) {
+    //   ticksPerQuarter = header.ticksPerBeat;
+    // }
+    const quarterToSixteenth = 4;
+
+    noteSequence.quantizationInfo = {
+      stepsPerQuarter: 4,
+      qpm: 120,
+    };
+
+    let currentTime = 0;
+    track.notes.forEach((note) => {
+      const pitch = note.midi;
+      const startTime = (note.ticks / ticksPerQuarter) * quarterToSixteenth;
+      const duration = (note.durationTicks / ticksPerQuarter) * quarterToSixteenth;
+      noteSequence.notes.push({
+        pitch,
+        startTime,
+        endTime: startTime + duration,
+        velocity: note.velocity,
+      });
+      currentTime = Math.max(currentTime, startTime + duration);
+    });
+    noteSequence.totalTime = Math.max(noteSequence.totalTime, currentTime);
+
+    noteSequence.totalQuantizedSteps = Math.floor(
+      (noteSequence.totalTime / 60) * noteSequence.quantizationInfo.stepsPerQuarter
+    );
+
+    const outputNoteSequence = {
+      notes: noteSequence.notes.map((note) => ({
+        pitch: note.pitch,
+        startTime: note.startTime,
+        endTime: note.endTime,
+        program: 0, // Assuming default program is 0
+        velocity: note.velocity,
+      })),
+      tempos: [{ time: 0, qpm: 120 }], // Assuming default qpm is 120
+      keySignatures: [{ time: 0, key: 0 }], // Assuming default key is C major
+      timeSignatures: [{ time: 0, numerator: 4, denominator: 4 }], // Assuming default time signature is 4/4
+      totalTime: noteSequence.totalTime,
+    };
+    return outputNoteSequence;
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+}
+
+function Visualizer(props) {
+  const [count, setCount] = useState(0);
+  function Increment() {
+    setCount(count + 1);
+  }
+  function Visualize() {
+    return(
+      <div>
+        {/* <Increment/> */}
+        {/* <MidiVisualizerComponent midiFile={noteSequences} number={0}/> */}
+      </div>
+    );
+  }
+  return (
+    <MidiVisualizerComponent noteSequences={noteSequences} number={0}/>
+  )
+}
+
+function ReturnDivs({fileJSON, selectedFile, noteSequences}) {
   const generateKey = (pre) => {
-    console.log(`${ pre }_${ new Date().getTime() }`);
+    //console.log(`${ pre }_${ new Date().getTime() }`);
     return `${ pre }_${ new Date().getTime() }_${Math.random()}`;
   }
   var listItems = (
-    <>
+    <div>
       <div className="w-full h-16 flex flex-initial justify-center"></div>
       <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
         <pre className="w-full flex flex-initial"></pre>
       </div>
-    </>
+    </div>
   );
   if (fileJSON !== undefined) {
     listItems = fileJSON.map((track) =>
       <div key={generateKey(track.channel)}>
         <div  className="w-full h-16 flex flex-initial justify-center"></div>
         <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
-          {/*<pre className="w-full flex flex-initial">{JSON.stringify(track, null, 2)}</pre>*/}
-          <MidiVisualizer track={track}/>
+          <MidiVisualizerComponent noteSequences={noteSequences} number={0}/>
         </div>
         <div className="flex flex-row">
           <div className="w-5/12"></div>
@@ -211,6 +401,7 @@ function ReturnDivs({fileJSON}) {
 };
 
 function Application({ selectedFile, setSelectedFile, fileJSON, setFileJSON }) {
+  const [noteSequences, setNoteSequences] = useState([]);
   return(
     <div className="flex flex-row">
       <div className="w-1/6"></div>
@@ -221,11 +412,12 @@ function Application({ selectedFile, setSelectedFile, fileJSON, setFileJSON }) {
             <h1 className="text-xl">React File Upload</h1>
           </div>
           <div className="w-full h-8 flex flex-initial justify-center">
-            <FileUploadPage selectedFile={selectedFile} setSelectedFile={setSelectedFile} setFileJSON={setFileJSON}/>
+            <FileUploadPage selectedFile={selectedFile} setSelectedFile={setSelectedFile} setFileJSON={setFileJSON} fileJSON={fileJSON}
+            noteSequences={noteSequences} setNoteSequences={setNoteSequences}/>
           </div>
           <div className="h-16"></div>
         </HeroPattern>
-        <ReturnDivs fileJSON={fileJSON}/>
+        <ReturnDivs fileJSON={fileJSON} selectedFile={selectedFile} noteSequences={noteSequences} setNoteSequences={setNoteSequences}/>
       </div>
       <div className="w-1/6"></div>
     </div>
