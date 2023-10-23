@@ -277,9 +277,8 @@ function ReturnDivs({fileJSON, selectedFile, noteSequences}) {
       <div key={generateKey(track.channel)}>
         <div  className="w-full h-16 flex flex-initial justify-center"></div>
         <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
-          <MidiVisualizerComponent noteSequences={noteSequences} number={count}/>
+          <MidiVisualizerComponent noteSequences={noteSequences} number={0}/>
         </div>
-        <Iterate/>
       </div>
     );
   }

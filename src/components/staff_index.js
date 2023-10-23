@@ -5,16 +5,19 @@ import * as ssv from './staff_svg_visualizer.ts'; // Import your staff_svg_visua
 const MidiVisualizerComponent = ({ noteSequences, number }) => {
   const staffRightRef = useRef(null);
   const playerRef = useRef(null);
+  const gainNodeRef = useRef(null); // Ref for the GainNode
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
-  const parsedNoteSequence = noteSequences[number];
+  const parsedNoteSequence = noteSequences[0];
 
   useEffect(() => {
     if (parsedNoteSequence) {
       const configRight = {
         noteHeight: 15,
         pixelsPerTimeStep: 0,
+        noteRGB: '0,0,0',
+        activeNoteRGB: '255,255,255',
         instruments: [0],
         defaultKey: 7,
         scrollType: ssv.ScrollType.BAR
@@ -32,6 +35,7 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
         },
         stop: () => {
           setIsPlaying(false);
+          setIsPaused(false);
         }
       });
 
@@ -41,6 +45,16 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
       const initialTempo = parsedNoteSequence.tempos[0].qpm;
       player.setTempo(initialTempo);
 
+      // Create an audio context
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+      // Create a GainNode for volume control
+      const gainNode = audioContext.createGain();
+      gainNode.connect(audioContext.destination); // Connect to the speakers
+
+      gainNodeRef.current = gainNode; // Save the GainNode in the ref
+
+      player.polySynth.options.volume = 50;
       // Cleanup when component unmounts
       return () => {
         player.stop();
@@ -50,15 +64,22 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
 
   const handlePlay = () => {
     const player = playerRef.current;
-    if (player) {
-      if (isPaused) {
-        player.resume(parsedNoteSequence);
-        setIsPlaying(true);
-        setIsPaused(false);
-      } else {
-        player.start(parsedNoteSequence);
-        setIsPlaying(true);
-        setIsPaused(false);
+    const gainNode = gainNodeRef.current;
+    if (player && gainNode) {
+        // Set the desired volume level (from 0 to 1)
+        gainNode.gain.value = 1; // Adjust the volume here (0.5 means 50% volume)
+
+        const player = playerRef.current;
+      if (player) {
+        if (isPaused) {
+          player.resume(parsedNoteSequence);
+          setIsPlaying(true);
+          setIsPaused(false);
+        } else {
+          player.start(parsedNoteSequence);
+          setIsPlaying(true);
+          setIsPaused(false);
+        }
       }
     }
   };
