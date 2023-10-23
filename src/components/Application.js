@@ -118,6 +118,7 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
 
 	const changeHandler = (event) => {
 		setSelectedFile(event.target.files[0]);
+    console.log(selectedFile);
 	};
 
   const handleFileChange = async (event) => {
@@ -129,8 +130,10 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
         totalJSON = new Midi(reader.result);
         const midiTracks = [];
         for (var i = 0; i < midi.tracks.length; i++) {
+          midi.header.index = i;
           const mergedObject = {
             ...midi.header,
+            ...midi.header.index,
             ...midi.tracks[i]
           };
           midiTracks.push(mergedObject);
@@ -254,13 +257,8 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
 }
 
 function ReturnDivs({fileJSON, selectedFile, noteSequences}) {
-  const [count, setCount] = React.useState(0);
-
-  function Iterate() {
-    var counter = count;
-    setCount(counter++);
-  }
   const generateKey = (pre) => {
+    console.log(fileJSON);
     //console.log(`${ pre }_${ new Date().getTime() }`);
     return `${ pre }_${ new Date().getTime() }_${Math.random()}`;
   }
@@ -277,7 +275,7 @@ function ReturnDivs({fileJSON, selectedFile, noteSequences}) {
       <div key={generateKey(track.channel)}>
         <div  className="w-full h-16 flex flex-initial justify-center"></div>
         <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
-          <MidiVisualizerComponent noteSequences={noteSequences} number={0}/>
+          <MidiVisualizerComponent noteSequences={noteSequences} number={track.index}/>
         </div>
       </div>
     );

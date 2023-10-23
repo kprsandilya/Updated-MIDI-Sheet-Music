@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import * as Tone from 'tone';
 import * as mm from '@magenta/music';
 import * as ssv from './staff_svg_visualizer.ts'; // Import your staff_svg_visualizer module
 
@@ -9,15 +10,15 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
-  const parsedNoteSequence = noteSequences[0];
+  const parsedNoteSequence = noteSequences[number];
 
   useEffect(() => {
     if (parsedNoteSequence) {
       const configRight = {
         noteHeight: 15,
         pixelsPerTimeStep: 0,
-        noteRGB: '0,0,0',
-        activeNoteRGB: '255,255,255',
+        noteRGB: '0,0,0, 1',
+        activeNoteRGB: '255,255,255, 1',
         instruments: [0],
         defaultKey: 7,
         scrollType: ssv.ScrollType.BAR
@@ -89,7 +90,8 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
     if (player) {
       player.pause();
       setIsPlaying(false);
-      setIsPaused(true)
+      setIsPaused(true);
+      Tone.Transport.stop();
     }
   };
 
@@ -99,6 +101,7 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
       player.stop();
       setIsPlaying(false);
       setIsPaused(false);
+      Tone.Transport.stop();
     }
   };
 
