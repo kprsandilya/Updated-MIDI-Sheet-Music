@@ -9,12 +9,10 @@ import * as Tone from 'tone';
 import * as mm from '@magenta/music';
 import MidiVisualizerComponent from "./staff_index.js";
 const { Midi } = require('@tonejs/midi');
-const fs = require('fs');
 
 var totalJSON;
 var totalSynths = [];
 var indSynths = [];
-var noteSequences = [];
 
 //Long Term
 //10/24
@@ -203,8 +201,8 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
     let currentTime = 0;
     track.notes.forEach((note) => {
       const pitch = note.midi;
-      const startTime = (note.ticks / ticksPerQuarter) * quarterToSixteenth;
-      const duration = (note.durationTicks / ticksPerQuarter) * quarterToSixteenth;
+      const startTime = (note.ticks / ticksPerQuarter) * quarterToSixteenth / 960;
+      const duration = (note.durationTicks / ticksPerQuarter) * quarterToSixteenth / 960;
       noteSequence.notes.push({
         pitch,
         startTime,
@@ -255,114 +253,13 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
 	)
 }
 
-function MidiToNoteSequence({ midiFile, setNoteSequences }) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [outputNoteSequences, setOutputNoteSequences] = useState(null);
-
-  useEffect(() => {
-    async function fetchAndParseMIDIFile() {
-      try {
-        if (midiFile != null) {
-          setNoteSequences((prevNoteSequences) => {
-            const newNoteSequences = [...prevNoteSequences];
-            midiFile.forEach((track) => {
-              const parsedNoteSequence = parseMidiToNoteSequence(track);
-              newNoteSequences.push(parsedNoteSequence);
-            });
-            return newNoteSequences;
-          });
-  
-          // Update state to stop loading
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        setError(error);
-        setLoading(false);
-      }
-    }
-  
-    fetchAndParseMIDIFile();
-  }, [midiFile]);
-
-  const parseMidiToNoteSequence = (track) => {
-    const noteSequence = new mm.NoteSequence();
-    const { header } = track;
-    var ticksPerQuarter = 4;
-    // if (header.ticksPerBeat != null) {
-    //   ticksPerQuarter = header.ticksPerBeat;
-    // }
-    const quarterToSixteenth = 4;
-
-    noteSequence.quantizationInfo = {
-      stepsPerQuarter: 4,
-      qpm: 120,
-    };
-
-    let currentTime = 0;
-    track.notes.forEach((note) => {
-      const pitch = note.midi;
-      const startTime = (note.ticks / ticksPerQuarter) * quarterToSixteenth;
-      const duration = (note.durationTicks / ticksPerQuarter) * quarterToSixteenth;
-      noteSequence.notes.push({
-        pitch,
-        startTime,
-        endTime: startTime + duration,
-        velocity: note.velocity,
-      });
-      currentTime = Math.max(currentTime, startTime + duration);
-    });
-    noteSequence.totalTime = Math.max(noteSequence.totalTime, currentTime);
-
-    noteSequence.totalQuantizedSteps = Math.floor(
-      (noteSequence.totalTime / 60) * noteSequence.quantizationInfo.stepsPerQuarter
-    );
-
-    const outputNoteSequence = {
-      notes: noteSequence.notes.map((note) => ({
-        pitch: note.pitch,
-        startTime: note.startTime,
-        endTime: note.endTime,
-        program: 0, // Assuming default program is 0
-        velocity: note.velocity,
-      })),
-      tempos: [{ time: 0, qpm: 120 }], // Assuming default qpm is 120
-      keySignatures: [{ time: 0, key: 0 }], // Assuming default key is C major
-      timeSignatures: [{ time: 0, numerator: 4, denominator: 4 }], // Assuming default time signature is 4/4
-      totalTime: noteSequence.totalTime,
-    };
-    return outputNoteSequence;
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-}
-
-function Visualizer(props) {
-  const [count, setCount] = useState(0);
-  function Increment() {
-    setCount(count + 1);
-  }
-  function Visualize() {
-    return(
-      <div>
-        {/* <Increment/> */}
-        {/* <MidiVisualizerComponent midiFile={noteSequences} number={0}/> */}
-      </div>
-    );
-  }
-  return (
-    <MidiVisualizerComponent noteSequences={noteSequences} number={0}/>
-  )
-}
-
 function ReturnDivs({fileJSON, selectedFile, noteSequences}) {
+  const [count, setCount] = React.useState(0);
+
+  function Iterate() {
+    var counter = count;
+    setCount(counter++);
+  }
   const generateKey = (pre) => {
     //console.log(`${ pre }_${ new Date().getTime() }`);
     return `${ pre }_${ new Date().getTime() }_${Math.random()}`;
@@ -380,15 +277,9 @@ function ReturnDivs({fileJSON, selectedFile, noteSequences}) {
       <div key={generateKey(track.channel)}>
         <div  className="w-full h-16 flex flex-initial justify-center"></div>
         <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
-          <MidiVisualizerComponent noteSequences={noteSequences} number={0}/>
+          <MidiVisualizerComponent noteSequences={noteSequences} number={count}/>
         </div>
-        <div className="flex flex-row">
-          <div className="w-5/12"></div>
-          <div className="w-1/6">
-            <PlaySound currentMidi={track} noPlay={0}/>
-          </div>
-          <div className="w-5/12"></div>
-        </div>
+        <Iterate/>
       </div>
     );
   }
