@@ -14,13 +14,9 @@ var totalJSON;
 var totalSynths = [];
 var indSynths = [];
 
-//Long Term
-//10/24
-
 //This week
-//Visualize Midi tracks
-//Pause, forward, stop, ui interface
-//Presentation on tehe 24th
+//Reload page on new file - Doesn't allow for changes across divs
+
 
 function TotalPlay({currentMidi, noPlay}) {
   function handleClick() {
@@ -115,13 +111,18 @@ function PlaySound({currentMidi, noPlay}) {
 function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, setNoteSequences, noteSequences }){
 
   const [showResults, setShowResults] = React.useState(false);
+  const [file, setFile] = React.useState(0);
 
 	const changeHandler = (event) => {
-		setSelectedFile(event.target.files[0]);
-    console.log(selectedFile);
+    if (selectedFile == null) {
+      setSelectedFile(event.target.files[0]);
+    } else {
+      window.location.reload();
+    }
 	};
 
   const handleFileChange = async (event) => {
+    console.log(selectedFile);
     if (selectedFile) {
       setShowResults(true);
       const reader = new FileReader();
@@ -219,7 +220,12 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
     noteSequence.totalQuantizedSteps = Math.floor(
       (noteSequence.totalTime / 60) * noteSequence.quantizationInfo.stepsPerQuarter
     );
-
+    let tempo;
+    if (track.tempos[0].bpm != null) {
+      tempo = Math.floor(track.tempos[0].bpm);
+    } else {
+      tempo = 120;
+    }
     const outputNoteSequence = {
       notes: noteSequence.notes.map((note) => ({
         pitch: note.pitch,
@@ -228,7 +234,7 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
         program: 0, // Assuming default program is 0
         velocity: note.velocity,
       })),
-      tempos: [{ time: 0, qpm: 120 }], // Assuming default qpm is 120
+      tempos: [{ time: 0, qpm: tempo}], // Assuming default qpm is 120
       keySignatures: [{ time: 0, key: 0 }], // Assuming default key is C major
       timeSignatures: [{ time: 0, numerator: 4, denominator: 4 }], // Assuming default time signature is 4/4
       totalTime: noteSequence.totalTime,
@@ -242,7 +248,7 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
         <input type="file" name="file" accept='.midi, .mid' onChange={changeHandler}/>
         <div className="h-8 pl-8 pt-[3px]">
           <button onClick={handleFileChange}>Submit</button>
-          {loading? <div>Loading...</div> : null}
+          {loading? null : null}
         </div>
       </div>
       <div className="flex flex-row w-full">
@@ -258,7 +264,7 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
 
 function ReturnDivs({fileJSON, selectedFile, noteSequences}) {
   const generateKey = (pre) => {
-    console.log(fileJSON);
+    //console.log(fileJSON);
     //console.log(`${ pre }_${ new Date().getTime() }`);
     return `${ pre }_${ new Date().getTime() }_${Math.random()}`;
   }

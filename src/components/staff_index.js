@@ -9,7 +9,8 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
   const gainNodeRef = useRef(null); // Ref for the GainNode
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-
+  const [isStopped, setIsStopped] = useState(false);
+  const [tempo, setTempo] = useState(120); // Initial tempo value is set to 120 BPM
   const parsedNoteSequence = noteSequences[number];
 
   useEffect(() => {
@@ -17,8 +18,8 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
       const configRight = {
         noteHeight: 15,
         pixelsPerTimeStep: 0,
-        noteRGB: '0,0,0, 1',
-        activeNoteRGB: '255,255,255, 1',
+        noteRGB: '255,255,255, 1',
+        activeNoteRGB: '255,0,0, 1',
         instruments: [0],
         defaultKey: 7,
         scrollType: ssv.ScrollType.BAR
@@ -76,10 +77,19 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
           player.resume(parsedNoteSequence);
           setIsPlaying(true);
           setIsPaused(false);
+          setIsStopped(false);
         } else {
-          player.start(parsedNoteSequence);
-          setIsPlaying(true);
-          setIsPaused(false);
+          try {
+            player.start(parsedNoteSequence);
+            setIsPlaying(true);
+            setIsPaused(false);
+            setIsStopped(true);
+            console.log("Aasdfasdf");
+          } catch (err) {
+            console.log(err);
+            //window.location.reload();
+            window.alert('Stop one track before starting another!');
+          }
         }
       }
     }
@@ -91,7 +101,6 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
       player.pause();
       setIsPlaying(false);
       setIsPaused(true);
-      Tone.Transport.stop();
     }
   };
 
@@ -101,12 +110,22 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
       player.stop();
       setIsPlaying(false);
       setIsPaused(false);
+      setIsStopped(true);
       Tone.Transport.stop();
     }
   };
 
+  useEffect(() => {
+    if (playerRef.current) {
+      playerRef.current.setTempo(tempo);
+    }
+  }, [tempo]);
+
   return (
+    
     <div className="overflow-auto w-full flex flex-col space-y-4">
+    <input type="range" min="40" max="240" step="1" value={tempo} onChange={(e) => setTempo(parseInt(e.target.value, 10))}className="w-full"/>
+    <span className="text-center">{tempo} BPM</span>
       <div ref={staffRightRef}></div>
       <div className="flex flex-row space-x-8">
         <div className="flex flex-row w-1/3">
