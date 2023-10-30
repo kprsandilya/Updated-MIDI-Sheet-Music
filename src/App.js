@@ -6,6 +6,7 @@ import About from "./components/About.js";
 import Home from "./components/Home.js";
 import Acknowledgements from "./components/Acknowledgements.js";
 import Application from "./components/Application.js";
+//import Application from "./components/ApplicationTest";
 import ProfileSettings from "./components/User/Settings.js";
 
 function App() {

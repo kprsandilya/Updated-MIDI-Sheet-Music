@@ -114,11 +114,12 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
   const [file, setFile] = React.useState(0);
 
 	const changeHandler = (event) => {
-    if (selectedFile == null) {
-      setSelectedFile(event.target.files[0]);
-    } else {
-      window.location.reload();
-    }
+    // if (selectedFile == null) {
+    //   setSelectedFile(event.target.files[0]);
+    // } else {
+    //   window.location.reload();
+    // }
+    setSelectedFile(event.target.files[0]);
 	};
 
   const handleFileChange = async (event) => {
@@ -163,11 +164,11 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
   const [outputNoteSequences, setOutputNoteSequences] = useState(null);
 
   useEffect(() => {
-    async function fetchAndParseMIDIFile() {
+    function fetchAndParseMIDIFile() {
       try {
         if (fileJSON != null) {
-          setNoteSequences((prevNoteSequences) => {
-            const newNoteSequences = [...prevNoteSequences];
+          setNoteSequences(() => {
+            const newNoteSequences = [];
             fileJSON.forEach((track) => {
               const parsedNoteSequence = parseMidiToNoteSequence(track);
               newNoteSequences.push(parsedNoteSequence);
