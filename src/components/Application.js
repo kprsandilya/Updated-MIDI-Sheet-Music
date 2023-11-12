@@ -15,8 +15,13 @@ var totalSynths = [];
 var indSynths = [];
 
 //This week
-//Reload page on new file - Doesn't allow for changes across divs
-
+//UI stuff
+  //Footer
+  //Navbar
+  //Home Page
+  //User Page
+//UI Libraries
+  //Mantine/Tailwind
 
 function TotalPlay({currentMidi, noPlay}) {
   function handleClick() {
@@ -57,7 +62,7 @@ function TotalPlay({currentMidi, noPlay}) {
   return(
     <div className="flex flex-row">
         <div className="justify-center pt-1">
-          <button onClick={handleClick} className="bg-blue-500 hover:bg-blue-700 w-full text-white font-bold py-2 px-4 rounded">Play</button>
+          <button onClick={handleClick} className="bg-blue-500 hover:bg-blue-700 w-20 h-10 text-white font-bold py-2 px-4 rounded">Play</button>
         </div>
       </div>
     )
@@ -100,11 +105,7 @@ function PlaySound({currentMidi, noPlay}) {
   }
 
   return(
-    <div className="flex flex-row w-full">
-       <div className="justify-center w-full pt-1">
-         <button onClick={handleClick} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Play</button>
-       </div>
-     </div>
+    <button onClick={handleClick} className="w-12 h-10 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Play</button>
    )
 }
 
@@ -243,23 +244,33 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
     return outputNoteSequence;
   };
 
-	return(
-    <div className="flex flex-col">
-      <div className="flex flex-row">
-        <input type="file" name="file" accept='.midi, .mid' onChange={changeHandler}/>
-        <div className="h-8 pl-8 pt-[3px]">
-          <button onClick={handleFileChange}>Submit</button>
-          {loading? null : null}
+  return(
+    <div class="flex flex-col items-center justify-center w-full">
+        <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                </svg>
+                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">.MIDI or .MID</p>
+            </div>
+            <input id="dropzone-file" type="file" name="file" accept='.midi, .mid' class="hidden" onChange={changeHandler} />
+        </label>
+       { showResults ? 
+          <div className="flex flex-row w-full pt-4">
+          <div className="w-1/3"></div>
+          <div className="w-1/6 justify-end pt-1">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-24 h-10" onClick={handleFileChange}>Submit</button>
+          </div>
+          <div className="w-1/6 flex justify-end">
+            <TotalPlay currentMidi={totalJSON} noPlay={0} className="pt-24"></TotalPlay>
+          </div>
+          <div className="w-1/3"></div>
         </div>
-      </div>
-      <div className="flex flex-row w-full">
-        <div className="w-5/12"></div>
-        <div className="w-1/6">
-          { showResults ? <TotalPlay currentMidi={totalJSON} noPlay={0}></TotalPlay> : null }
-        </div>
-        <div className="w-5/12"></div>
-      </div>
-    </div>
+          : <div className="pt-4">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-24 h-10" onClick={handleFileChange}>Submit</button>
+            </div> }
+    </div> 
 	)
 }
 
@@ -302,16 +313,10 @@ function Application({ selectedFile, setSelectedFile, fileJSON, setFileJSON }) {
       <div className="w-1/6"></div>
       <div className="text-slate-600 w-2/3">
         <div className="h-8"></div>
-        <HeroPattern pttrn={'topography-pattern'}>
-          <div className="w-full h-24 pt-12 flex flex-initial justify-center">
-            <h1 className="text-xl">React File Upload</h1>
-          </div>
-          <div className="w-full h-8 flex flex-initial justify-center">
+        <div className="w-full h-64 flex flex-initial justify-center">
             <FileUploadPage selectedFile={selectedFile} setSelectedFile={setSelectedFile} setFileJSON={setFileJSON} fileJSON={fileJSON}
             noteSequences={noteSequences} setNoteSequences={setNoteSequences}/>
           </div>
-          <div className="h-16"></div>
-        </HeroPattern>
         <ReturnDivs fileJSON={fileJSON} selectedFile={selectedFile} noteSequences={noteSequences} setNoteSequences={setNoteSequences}/>
       </div>
       <div className="w-1/6"></div>

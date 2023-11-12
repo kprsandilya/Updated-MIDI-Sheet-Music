@@ -2,7 +2,7 @@ import '../App.css';
 import "../input.css";
 import MIDILogo from "../Harp MIDI Logo.svg";
 import { Menu, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { HashLink as Link } from 'react-router-hash-link';
 
 function NavBar() {
@@ -70,7 +70,6 @@ function NavBar() {
           </Menu>
         </div>
       </nav>
-      
       </>
     );
   }

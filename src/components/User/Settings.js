@@ -1,59 +1,29 @@
-import React from "react";
+import { React, Fragment } from "react";
 import '../../App.css';
 import "../../input.css";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import { Tab } from "@headlessui/react";
 import NavBar from "../NavBar.js";
 import Footer from "../Footer.js";
 
-function TabReturn() {
-  return(
-  <Tabs className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 text-white">
-      <TabList className="">
-        <Tab className="hover:bg-slate-700 h-20 pt-6 rounded-2xl pl-4 text-xl">Tab 1</Tab>
-        <Tab className="hover:bg-slate-700 h-20 pt-6 rounded-2xl pl-4 text-xl">Tab 2</Tab>
-        <Tab className="hover:bg-slate-700 h-20 pt-6 rounded-2xl pl-4 text-xl" >Tab 3</Tab>
-      </TabList>
-      <TabPanel>
-          1
-      </TabPanel>
-      <TabPanel>
-          2
-      </TabPanel>
-      <TabPanel>
-          3
-      </TabPanel>
-    </Tabs>
-  );
-}
-
-function SettingButton({words}){
-  return(
-    <>
-      <div className="h-8"></div>
-      <div className="flex flex-row">
-        <div className="w-1/12 bg-transparent"></div>
-        <div className="w-5/6 h-20 pt-4 place-content-center text-16 text-white bg-transparent">
-          <TabReturn/>
+function MyTabs() {
+  return (
+    <Tab.Group vertical className="pt-24 px-24">
+      <div className="flex flex-row w-full">
+        <div className="w-1/6">
+          <p className="text-gray-300 text-center text-2xl">Settings</p>
+          <Tab.List className="flex flex-col justify-start space-y-2 p-4 rounded-lg">
+            <Tab className="text-gray-200 bg-gray-600 tab-active focus:bg-gray-100 hover:bg-gray-700 rounded-md p-2 transition duration-300 ease-in-out">Tab 1</Tab>
+            <Tab className="text-gray-200 bg-gray-600 tab-active focus:bg-gray-100 hover:bg-gray-700 rounded-md p-2 transition duration-300 ease-in-out">Tab 2</Tab>
+            <Tab className="text-gray-200 bg-gray-600 tab-active focus:bg-gray-100 hover:bg-gray-700 rounded-md p-2 transition duration-300 ease-in-out">Tab 3</Tab>
+          </Tab.List>
         </div>
-        <div className="w-1/12 bg-transparent"></div>
+        <Tab.Panels className="p-4 w-5/6">
+          <Tab.Panel className="text-white">Content 1</Tab.Panel>
+          <Tab.Panel className="text-white">Content 2</Tab.Panel>
+          <Tab.Panel className="text-white">Content 3</Tab.Panel>
+        </Tab.Panels>
       </div>
-    </>
-  );
-}
-
-function UserSettings() {
-  return(
-    <div className="flex flex-row">
-      <div className="w-1/3 h-screen flex flex-initial flex-col bg-gradient-to-t from-gray-600 via-gray-900 to-black">
-        <div className="bg-slate-600 flex flex-row">
-          <div className="w-full h-20 pt-4 place-content-center text-2xl pl-4">Profile Settings</div>
-        </div>
-        <SettingButton words="What"/>
-      </div>
-      <div className="w-2/3 h-screen flex flex-initial flex-col bg-gradient-to-t from-gray-600 via-gray-900 to-black">
-        
-      </div>
-    </div>
+    </Tab.Group>
   );
 }
   
@@ -61,8 +31,8 @@ function Body(){
   return (
     <>
       <NavBar/>
-      <div className="bg-gradient-to-b from-gray-900 to-gray-600 bg-gradient-to-r pb-12">
-        <UserSettings/>
+      <div className="bg-gradient-to-b from-gray-900 to-gray-600 bg-gradient-to-r pb-12 w-full h-full">
+        <MyTabs/>
         <Footer/>
       </div>
     </>
