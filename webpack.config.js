@@ -7,11 +7,22 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
     fallback: {
-      "buffer": require.resolve("buffer/")
-    }
+      "fs": false,
+      "tls": false,
+      "net": false,
+      "path": false,
+      "zlib": false,
+      "http": false,
+      "https": false,
+      "stream": false,
+      "constants": false,
+      "crypto": false,
+      "child_process": "empty",
+      "os": false,
+    },
   },
-  // Other configuration options...
   module: {
     rules: [
       {
@@ -21,7 +32,10 @@ module.exports = {
       },
     ],
   },
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+  node: {
+    fs: 'empty',
+    child_process: 'empty',
+    constants: false,
+    os: false,
   },
 };

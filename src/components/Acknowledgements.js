@@ -5,6 +5,8 @@ import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
 import HeroPattern from "./HeroPattern.js";
 
+//https://www.freecodecamp.org/news/use-firebase-authentication-in-a-react-app/
+
 function Acknowledgements() {
     return(
     <div className="flex flex-row">

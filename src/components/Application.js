@@ -3,7 +3,6 @@ import '../App.css';
 import "../input.css";
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
-import HeroPattern from "./HeroPattern.js";
 import { useState, useRef, useEffect } from 'react';
 import * as Tone from 'tone';
 import * as mm from '@magenta/music';

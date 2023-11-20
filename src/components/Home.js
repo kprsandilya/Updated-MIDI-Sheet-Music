@@ -5,6 +5,31 @@ import Footer from "./Footer.js";
 import MIDILogo from "../Harp MIDI Logo.svg";
 import HeroPattern from "./HeroPattern.js";
 
+import handleSubmit from '../handles/handleSubmit';
+import { useRef } from 'react';
+ 
+function FireTest() {
+  const dataRef = useRef()
+ 
+  const submithandler = (e) => {
+    e.preventDefault()
+    handleSubmit(dataRef.current.value)
+    dataRef.current.value = ""
+  }
+ 
+  return (
+    <>
+      <div className="App">
+        <form onSubmit={submithandler}>
+          <input type= "text" ref={dataRef} />
+          <button type = "submit">Save</button>
+        </form>
+      </div>
+    </>
+
+  );
+}
+
 function TailWindHome() {
     return (
         <div class="overflow-hidden py-24 sm:py-32">
