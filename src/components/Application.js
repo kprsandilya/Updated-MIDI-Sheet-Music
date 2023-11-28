@@ -7,6 +7,10 @@ import { useState, useRef, useEffect } from 'react';
 import * as Tone from 'tone';
 import * as mm from '@magenta/music';
 import MidiVisualizerComponent from "./staff_index.js";
+import { addDoc, collection, doc, setDoc, getDoc, updateDoc } from "@firebase/firestore";
+import { firestore, FieldValue, storage, storageRef } from '../firebase_setup/firebase';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { auth } from '../firebase_setup/firebase';
 const { Midi } = require('@tonejs/midi');
 
 var totalJSON;
@@ -14,13 +18,12 @@ var totalSynths = [];
 var indSynths = [];
 
 //This week
-//UI stuff
-  //Footer
-  //Navbar
-  //Home Page
-  //User Page
-//UI Libraries
-  //Mantine/Tailwind
+//Add svg of staff to account and allow download
+//Tab stuff
+
+//Display individual midi files for download
+//Firebase accounts
+  //Save midi files/documents
 
 function TotalPlay({currentMidi, noPlay}) {
   function handleClick() {
@@ -112,6 +115,7 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
 
   const [showResults, setShowResults] = React.useState(false);
   const [file, setFile] = React.useState(0);
+  const [user, setUser] = useState(auth.currentUser);
 
 	const changeHandler = (event) => {
     // if (selectedFile == null) {
@@ -121,6 +125,75 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
     // }
     setSelectedFile(event.target.files[0]);
 	};
+
+    useEffect(() => {
+      const user = auth.currentUser;
+      if (user !== null) {
+        // The user object has basic properties such as display name, email, etc.
+        const displayName = user.displayName;
+        const email = user.email;
+        const photoURL = user.photoURL;
+        const emailVerified = user.emailVerified;
+
+        // The user's ID, unique to the Firebase project. Do NOT use
+        // this value to authenticate with your backend server, if
+        // you have one. Use User.getToken() instead.
+        const uid = user.uid;
+      }
+      
+    }, [user]);
+
+    async function handleSave() {
+
+      if (user) {
+        const userDocRef = doc(firestore, 'users', user.email);
+        
+        // Fetch the existing data
+        const userDoc = await getDoc(userDocRef);
+        const existingMidiArray = userDoc.data().midiArray || [];
+    
+        // Check if the value is already in the array
+        if (!existingMidiArray.includes('greater_virginia')) {
+          // If not, add the new value
+          existingMidiArray.push('greater_virginia');
+    
+          // Update the Firestore document with the modified array
+          await updateDoc(userDocRef, {
+            midiArray: existingMidiArray,
+          });
+        }
+      } else {
+        console.error("User not logged in");
+      }
+    }
+
+    async function uploadMidiFile(user, file) {
+      try {
+        if (!user || !file) {
+          console.error('User or file is not available.');
+          return;
+        }
+    
+        // Upload the MIDI file to storage
+        const storageRef = ref(storage, `midiFiles/${user.uid}/${file.name}`);
+        await uploadBytes(storageRef, file);
+    
+        // Get the download URL of the uploaded file
+        const downloadURL = await getDownloadURL(storageRef);
+    
+        // Save metadata to Firestore
+        const midiFilesRef = collection(firestore, 'users', user.uid, 'midiFiles');
+        const newMidiFileRef = await addDoc(midiFilesRef, {
+          fileName: file.name,
+          fileUrl: downloadURL,
+          // Add other metadata if needed
+        });
+    
+        console.log('MIDI file uploaded successfully:', newMidiFileRef.id);
+      } catch (error) {
+        console.error('Error uploading MIDI file:', error);
+      }
+    }
 
   const handleFileChange = async (event) => {
     console.log(selectedFile);
@@ -244,27 +317,30 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
   };
 
   return(
-    <div class="flex flex-col items-center justify-center w-full">
-        <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+    <div className="flex flex-col items-center justify-center w-full">
+        <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                 </svg>
-                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">.MIDI or .MID</p>
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">.MIDI or .MID</p>
             </div>
-            <input id="dropzone-file" type="file" name="file" accept='.midi, .mid' class="hidden" onChange={changeHandler} />
+            <input id="dropzone-file" type="file" name="file" accept='.midi, .mid' className="hidden" onChange={changeHandler} />
         </label>
        { showResults ? 
           <div className="flex flex-row w-full pt-4">
-          <div className="w-1/3"></div>
+          <div className="w-1/4"></div>
           <div className="w-1/6 justify-end pt-1">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-24 h-10" onClick={handleFileChange}>Submit</button>
+          </div>
+          <div className="w-1/6 justify-center px-12 pt-1">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-24 h-10" onClick={() => uploadMidiFile(user, selectedFile)}>Save</button>
           </div>
           <div className="w-1/6 flex justify-end">
             <TotalPlay currentMidi={totalJSON} noPlay={0} className="pt-24"></TotalPlay>
           </div>
-          <div className="w-1/3"></div>
+          <div className="w-1/4"></div>
         </div>
           : <div className="pt-4">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-24 h-10" onClick={handleFileChange}>Submit</button>

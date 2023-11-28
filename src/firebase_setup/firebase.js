@@ -3,6 +3,9 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "@firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getElementError } from "@testing-library/react";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,4 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 export const auth = getAuth(app);
-export const firestore = getFirestore(app)
+export const firestore = getFirestore(app);
+export const FieldValue = getFirestore(app);
+export const storage = getStorage();
+export const storageRef = ref(storage);

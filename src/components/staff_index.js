@@ -2,6 +2,23 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as Tone from 'tone';
 import * as mm from '@magenta/music';
 import * as ssv from './staff_svg_visualizer.ts'; // Import your staff_svg_visualizer module
+import { saveAs } from 'file-saver';
+import { PDFDownloadLink, Document, Page, Image, Text } from '@react-pdf/renderer';
+import SvgParser from "./svgParser.js";
+
+const DownloadSVG = ({ svgContent, fileName }) => {
+  const handleDownload = () => {
+    const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
+    saveAs(svgBlob, fileName || 'image.svg');
+  };
+
+  return (
+    <div>
+      <button onClick={handleDownload}>Download SVG</button>
+      <SvgParser svgpic={svgContent}/>
+    </div>
+  );
+};
 
 const MidiVisualizerComponent = ({ noteSequences, number }) => {
   const staffRightRef = useRef(null);
@@ -10,6 +27,7 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isStopped, setIsStopped] = useState(false);
+  const [svg, setSVG] = useState(null);
   const [tempo, setTempo] = useState(120); // Initial tempo value is set to 120 BPM
   const parsedNoteSequence = noteSequences[number];
 
@@ -30,6 +48,15 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
         staffRightRef.current,
         configRight
       );
+
+    // Serialize the SVG element to a string
+    const svgString = new XMLSerializer().serializeToString(visualizerRight.render.staffSVG);
+
+    // Change stroke color to black in the SVG string
+    const updatedSvgString = svgString.replace(/stroke=["'](?:rgba?\(\d{1,3},\s?\d{1,3},\s?\d{1,3}(?:,\s?[.\d]+)?\)|#[0-9a-fA-F]+|white)["']/g, 'stroke="black"');
+    const up2SvgString = updatedSvgString.replace(/fill=["'](?:rgba?\(\d{1,3},\s?\d{1,3},\s?\d{1,3}(?:,\s?[.\d]+)?\)|#[0-9a-fA-F]+|white)["']/g, 'fill="black"');
+
+    setSVG(up2SvgString);
 
       const player = new mm.Player(false, {
         run: (note) => {
@@ -84,7 +111,6 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
             setIsPlaying(true);
             setIsPaused(false);
             setIsStopped(true);
-            console.log("Aasdfasdf");
           } catch (err) {
             console.log(err);
             //window.location.reload();
@@ -124,8 +150,8 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
   return (
     
     <div className="overflow-auto w-full flex flex-col space-y-4">
-    <input type="range" min="40" max="240" step="1" value={tempo} onChange={(e) => setTempo(parseInt(e.target.value, 10))}className="w-full"/>
-    <span className="text-center">{tempo} BPM</span>
+      <input type="range" min="40" max="240" step="1" value={tempo} onChange={(e) => setTempo(parseInt(e.target.value, 10))}className="w-full"/>
+      <span className="text-center">{tempo} BPM</span>
       <div ref={staffRightRef}></div>
       <div className="flex flex-row space-x-8">
         <div className="flex flex-row w-1/3">
@@ -149,6 +175,7 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
             </div>
             <div className="w-1/6"></div>
         </div>
+        <DownloadSVG svgContent={svg}/>
       </div>
     </div>
   );

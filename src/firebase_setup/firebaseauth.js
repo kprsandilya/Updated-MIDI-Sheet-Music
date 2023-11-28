@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {  createUserWithEmailAndPassword  } from 'firebase/auth';
 import { auth } from './firebase';
+import { addDoc, collection, doc, setDoc } from "@firebase/firestore"
+import { firestore } from "../firebase_setup/firebase"
 import NavBar from "../components/NavBar.js";
 import Footer from "../components/Footer.js";
  
@@ -19,8 +21,20 @@ const Signup = () => {
             // Signed in
             const user = userCredential.user;
             console.log(user);
-            navigate("/login")
-            // ...
+            navigate("/")
+
+            const userDocRef = doc(firestore, 'users', email);
+
+            const data = {
+                email: email,
+                password: password,
+                midiArray: [],
+                svgArray: [],
+                pdfArray: [],
+                theme: null,
+            }
+            
+            setDoc(userDocRef, data);
         })
         .catch((error) => {
             const errorCode = error.code;
