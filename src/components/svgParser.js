@@ -170,9 +170,9 @@ export default function SvgParser({svgpic}) {
         </Document>
       }
       fileName="somename.pdf"
-    >
+      className="flex items-center text-center">
       {({ blob, url, loading, error }) =>
-        loading ? "Loading document..." : "Download PDF"
+        loading ? <p>Loading document...</p> : <p className="flex items-center">Download PDF</p>
       }
     </PDFDownloadLink>
   );

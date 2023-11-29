@@ -143,30 +143,6 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
       
     }, [user]);
 
-    async function handleSave() {
-
-      if (user) {
-        const userDocRef = doc(firestore, 'users', user.email);
-        
-        // Fetch the existing data
-        const userDoc = await getDoc(userDocRef);
-        const existingMidiArray = userDoc.data().midiArray || [];
-    
-        // Check if the value is already in the array
-        if (!existingMidiArray.includes('greater_virginia')) {
-          // If not, add the new value
-          existingMidiArray.push('greater_virginia');
-    
-          // Update the Firestore document with the modified array
-          await updateDoc(userDocRef, {
-            midiArray: existingMidiArray,
-          });
-        }
-      } else {
-        console.error("User not logged in");
-      }
-    }
-
     async function uploadMidiFile(user, file) {
       try {
         if (!user || !file) {
@@ -188,6 +164,9 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
           fileUrl: downloadURL,
           // Add other metadata if needed
         });
+
+        // Step 2: Update the document with the generated ID
+        await updateDoc(newMidiFileRef, { id: newMidiFileRef.id });
     
         console.log('MIDI file uploaded successfully:', newMidiFileRef.id);
       } catch (error) {
@@ -196,7 +175,6 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
     }
 
   const handleFileChange = async (event) => {
-    console.log(selectedFile);
     if (selectedFile) {
       setShowResults(true);
       const reader = new FileReader();
@@ -368,7 +346,7 @@ function ReturnDivs({fileJSON, selectedFile, noteSequences}) {
       <div key={generateKey(track.channel)}>
         <div  className="w-full h-16 flex flex-initial justify-center"></div>
         <div className="w-full h-96 flex flex-initial justify-center overflow-auto text-white">
-          <MidiVisualizerComponent noteSequences={noteSequences} number={track.index}/>
+          <MidiVisualizerComponent noteSequences={noteSequences} number={track.index} fileName={selectedFile.name}/>
         </div>
       </div>
     );

@@ -23,15 +23,13 @@ const Signup = () => {
             console.log(user);
             navigate("/")
 
-            const userDocRef = doc(firestore, 'users', email);
+            const userDocRef = doc(firestore, 'users', user.uid);
 
             const data = {
                 email: email,
+                username: email,
                 password: password,
-                midiArray: [],
-                svgArray: [],
-                pdfArray: [],
-                theme: null,
+                theme: "",
             }
             
             setDoc(userDocRef, data);

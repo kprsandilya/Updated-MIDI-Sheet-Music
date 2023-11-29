@@ -4,23 +4,119 @@ import * as mm from '@magenta/music';
 import * as ssv from './staff_svg_visualizer.ts'; // Import your staff_svg_visualizer module
 import { saveAs } from 'file-saver';
 import { PDFDownloadLink, Document, Page, Image, Text } from '@react-pdf/renderer';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { addDoc, collection, doc, setDoc, getDoc, updateDoc } from "@firebase/firestore";
+import { firestore, FieldValue, storage, storageRef } from '../firebase_setup/firebase';
+import { auth } from '../firebase_setup/firebase';
 import SvgParser from "./svgParser.js";
+import Alert from '@mui/material/Alert';
 
 const DownloadSVG = ({ svgContent, fileName }) => {
+  const [user, setUser] = useState(auth.currentUser);
   const handleDownload = () => {
     const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
-    saveAs(svgBlob, fileName || 'image.svg');
+    var name = fileName + ".svg";
+    saveAs(svgBlob, name || 'image.svg');
   };
 
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user !== null) {
+      // The user object has basic properties such as display name, email, etc.
+      const displayName = user.displayName;
+      const email = user.email;
+      const photoURL = user.photoURL;
+      const emailVerified = user.emailVerified;
+
+      // The user's ID, unique to the Firebase project. Do NOT use
+      // this value to authenticate with your backend server, if
+      // you have one. Use User.getToken() instead.
+      const uid = user.uid;
+    }
+    
+  }, [user]);
+
+  async function handleSVG(user, file) {
+    try {
+      if (!user || !file) {
+        console.error('User or file is not available.');
+        return;
+      }
+  
+      // Upload the SVG file to storage
+      const storageRef = ref(storage, `svgFiles/${user.uid}/${fileName + ".svg"}`);
+      await uploadBytes(storageRef, file);
+  
+      // Get the download URL of the uploaded file
+      const downloadURL = await getDownloadURL(storageRef);
+  
+      // Save metadata to Firestore
+      const svgFilesRef = collection(firestore, 'users', user.uid, 'svgFiles');
+      const newSVGFileRef = await addDoc(svgFilesRef, {
+        fileName: fileName + ".svg",
+        fileUrl: downloadURL,
+        // Add other metadata if needed
+      });
+
+      // Step 2: Update the document with the generated ID
+      await updateDoc(newSVGFileRef, { id: newSVGFileRef.id });
+  
+      console.log('SVG file uploaded successfully:', newSVGFileRef.id);
+    } catch (error) {
+      console.error('Error uploading SVG file:', error);
+    }
+  }
+
+  async function handlePDF(user, file) {
+    try {
+      if (!user || !file) {
+        console.error('User or file is not available.');
+        return;
+      }
+  
+      // Upload the MIDI file to storage
+      const storageRef = ref(storage, `pdfFiles/${user.uid}/${file.name}`);
+      await uploadBytes(storageRef, file);
+  
+      // Get the download URL of the uploaded file
+      const downloadURL = await getDownloadURL(storageRef);
+  
+      // Save metadata to Firestore
+      const pdfFilesRef = collection(firestore, 'users', user.uid, 'pdfFiles');
+      const newPDFFileRef = await addDoc(pdfFilesRef, {
+        fileName: file.name,
+        fileUrl: downloadURL,
+        // Add other metadata if needed
+      });
+  
+      console.log('PDF file uploaded successfully:', newPDFFileRef.id);
+    } catch (error) {
+      console.error('Error uploading PDF file:', error);
+    }
+  }
+
+  function throwError() {
+    window.alert("Currently Disabled!");
+  }
+
   return (
-    <div>
-      <button onClick={handleDownload}>Download SVG</button>
-      <SvgParser svgpic={svgContent}/>
-    </div>
+    <>
+      <div className="text-sm flex items-center text-cyan-600 underline underline-offset-2">
+        <button onClick={handleDownload}>Download SVG</button>
+        <br/>
+        <button onClick={() => handleSVG(user, new Blob([svgContent], { type: 'image/svg+xml' }))}>Save SVG</button>
+      </div>
+      <div className="text-sm flex items-center text-cyan-600 underline underline-offset-2">
+        <SvgParser svgpic={svgContent}/>
+        <br/>
+        {/* <button onClick={() => handlePDF(user, )}>Save PDF</button> */}
+        <button onClick={throwError}>Save PDF</button>
+      </div>
+    </>
   );
 };
 
-const MidiVisualizerComponent = ({ noteSequences, number }) => {
+const MidiVisualizerComponent = ({ noteSequences, number, fileName }) => {
   const staffRightRef = useRef(null);
   const playerRef = useRef(null);
   const gainNodeRef = useRef(null); // Ref for the GainNode
@@ -29,6 +125,7 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
   const [isStopped, setIsStopped] = useState(false);
   const [svg, setSVG] = useState(null);
   const [tempo, setTempo] = useState(120); // Initial tempo value is set to 120 BPM
+  const [alertUp, setAlert] = useState(false);
   const parsedNoteSequence = noteSequences[number];
 
   useEffect(() => {
@@ -113,7 +210,6 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
             setIsStopped(true);
           } catch (err) {
             console.log(err);
-            //window.location.reload();
             window.alert('Stop one track before starting another!');
           }
         }
@@ -154,28 +250,28 @@ const MidiVisualizerComponent = ({ noteSequences, number }) => {
       <span className="text-center">{tempo} BPM</span>
       <div ref={staffRightRef}></div>
       <div className="flex flex-row space-x-8">
-        <div className="flex flex-row w-1/3">
+        <div className="flex flex-row w-1/4">
             <div className="w-1/6"></div>
             <div className="w-2/3">
             <button onClick={handlePlay} disabled={isPlaying} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Play</button>
             </div>
             <div className="w-1/6"></div>
         </div>
-        <div className="flex flex-row w-1/3">
+        <div className="flex flex-row w-1/4">
             <div className="w-1/6"></div>
             <div className="w-2/3">
             <button onClick={handlePause} disabled={!isPlaying} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Pause</button>
             </div>
             <div className="w-1/6"></div>
         </div>
-        <div className="flex flex-row w-1/3">
+        <div className="flex flex-row w-1/4">
             <div className="w-1/6"></div>
             <div className="w-2/3">
             <button onClick={handleStop} disabled={!isPlaying} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Stop</button>
             </div>
             <div className="w-1/6"></div>
         </div>
-        <DownloadSVG svgContent={svg}/>
+        <DownloadSVG className="w-1/4" svgContent={svg} fileName={fileName}/>
       </div>
     </div>
   );
