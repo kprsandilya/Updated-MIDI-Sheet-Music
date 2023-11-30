@@ -2,7 +2,7 @@ import '../App.css';
 import "../input.css";
 import MIDILogo from "../Harp MIDI Logo.svg";
 import { Menu, Transition } from '@headlessui/react';
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, Suspense } from 'react';
 import { HashLink as Link } from 'react-router-hash-link';
 import { auth } from '../firebase_setup/firebase';
 
@@ -19,19 +19,7 @@ function NavBar() {
     }
 
     useEffect(() => {
-      const user = auth.currentUser;
-      if (user !== null) {
-        // The user object has basic properties such as display name, email, etc.
-        const displayName = user.displayName;
-        const email = user.email;
-        const photoURL = user.photoURL;
-        const emailVerified = user.emailVerified;
-
-        // The user's ID, unique to the Firebase project. Do NOT use
-        // this value to authenticate with your backend server, if
-        // you have one. Use User.getToken() instead.
-        const uid = user.uid;
-      }
+      setUser(auth.currentUser);
       
     }, [user]);
 
@@ -56,12 +44,14 @@ function NavBar() {
           </div>
         </div>
         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-          {user !== null ? 
-            null
-          : <>
-              <Link to="/signup" className="text-md"> Sign Up </Link>
-              <Link to="/login" className="px-8 text-md"> Login </Link>
-            </>}
+          <Suspense fallback={<div/>}>
+            {!user &&
+              <>
+                <Link to="/signup" className="text-md"> Sign Up </Link>
+                <Link to="/login" className="px-8 text-md"> Login </Link>
+              </>
+            }
+          </Suspense>
           {/* Profile dropdown */}
           <Menu as="div" className="relative ml-3">
             <div>

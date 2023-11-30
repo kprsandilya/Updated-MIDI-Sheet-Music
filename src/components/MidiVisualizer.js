@@ -1,7 +1,4 @@
-import React, { useEffect, useRef } from 'react';
 import * as mm from '@magenta/music';
-import * as ssv from './staff_svg_visualizer.ts';
-import { Midi } from '@tonejs/midi';
 
 const MidiTrackVisualizer = ({ midiFile }) => {
 
@@ -62,7 +59,6 @@ const MidiTrackVisualizer = ({ midiFile }) => {
     outputNoteSequence.notes.push(outputNote);
   });
 
-  console.log(outputNoteSequence);
   return outputNoteSequence;
 };
 

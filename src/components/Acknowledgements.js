@@ -3,36 +3,7 @@ import '../App.css';
 import "../input.css";
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
-import HeroPattern from "./HeroPattern.js";
 import MIDILogo from "../Harp MIDI Logo.svg";
-
-function Acknowledgements() {
-    return(
-    <div className="flex flex-row">
-      <div className="w-1/6"></div>
-      <div className="text-slate-600 w-2/3">
-        <div className="h-8"></div>
-        <HeroPattern pttrn={'temple'}>
-          <div className="flex flex-col space-y-4">
-            <div className="w-full h-20 flex flex-initial justify-center pt-8">
-              <p>https://hypercolor.dev/</p>  
-            </div>
-            <div className="w-full h-20 flex flex-initial justify-center pt-8">
-              <p>https://heropatterns.com/</p>
-            </div>
-            <div className="w-full h-20 flex flex-initial justify-center pt-8">
-              <p>https://tonejs.github.io/Midi/</p>
-            </div>
-            <div className="w-full h-28 flex flex-initial justify-center pt-8">
-              <p>https://magenta.github.io/magenta-js/music/</p>
-            </div>
-          </div>
-        </HeroPattern>
-        </div>
-      <div className="w-1/6"></div>
-    </div>
-    );
-}
 
 function TailWindAcknowledgements() {
   return (
@@ -77,10 +48,9 @@ function TailWindAcknowledgements() {
           </div>
           <div className="flex items-center justify-center pt-12 space-x-24 flex-row">
             <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://chat.openai.com/"> ChatGPT</a>
-            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://www.robinwieruch.de/react-dropdown/"> rw;eruh</a>
-            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://tonejs.github.io/Midi/"> ToneJS</a>
-            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://magenta.github.io/magenta-js/music/"> MagentaJS</a>
-            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://firebase.google.com/"> FireBase</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://tailwindui.com/components/"> Tailwind UI</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://ui.mantine.dev/"> Mantine UI</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://gist.github.com/dennemark/5f0f3d7452d9334f9349172db6c40f74"> SVG to React-PDF</a>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ import { Text } from '@mantine/core';
 import NavBar from "../NavBar.js";
 import Footer from "../Footer.js";
 import HeroPattern from "../HeroPattern";
-import { collection, getDocs, doc, deleteDoc, getDoc, updateDoc } from "@firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, updateDoc } from "@firebase/firestore";
 import { firestore } from '../../firebase_setup/firebase';
 import { auth } from '../../firebase_setup/firebase';
 import { getStorage, ref } from "firebase/storage";
@@ -31,7 +31,6 @@ function Demo() {
   const activeTab = searchParams.get('tab') || 'tab1';
 
   function signOut() {
-    console.log("af")
     auth.signOut().then(function() {
       setUser(null);
     }, function(error) {
@@ -41,20 +40,7 @@ function Demo() {
   }
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user !== null) {
-      setUser(user); 
-      // The user object has basic properties such as display name, email, etc.
-      const displayName = user.displayName;
-      const email = user.email;
-      const photoURL = user.photoURL;
-      const emailVerified = user.emailVerified;
-
-      // The user's ID, unique to the Firebase project. Do NOT use
-      // this value to authenticate with your backend server, if
-      // you have one. Use User.getToken() instead.
-      const uid = user.uid;
-    }
+    setUser(auth.currentUser);
     
   }, [user]);
 
@@ -86,28 +72,17 @@ function Demo() {
       var firestoreRef;
 
       // Create a reference to the file to delete
-      if (file.fileName.substring(file.fileName.length - 3) == 'mid') {
+      if (file.fileName.substring(file.fileName.length - 3) === 'mid') {
         try {
           firestoreRef = doc(firestore, 'users', user.uid, 'midiFiles', file.id);
         } catch {}
-      } else if (file.fileName.substring(file.fileName.length - 3) == 'svg') {
+      } else if (file.fileName.substring(file.fileName.length - 3) === 'svg') {
         try {
           firestoreRef = doc(firestore, 'users', user.uid, 'svgFiles', file.id);
         } catch {}
-      }
 
-      if (file.fileName.substring(file.fileName.length - 3) == 'mid') {
-        try {
-          itemRef = ref(storage, 'midiFiles/' + user.uid + "/" + file.fileName);
-        } catch {}
-      } else if (file.fileName.substring(file.fileName.length - 3) == 'svg') {
-        try {
-          itemRef = ref(storage, 'svgFiles/' + user.uid + "/" + file.fileName);
-        } catch {}
-      }
-      
-      // Delete the document
-      deleteDoc(firestoreRef)
+        // Delete the document
+        deleteDoc(firestoreRef)
         .then(() => {
           console.log('Document deleted successfully');
         })
@@ -115,6 +90,28 @@ function Demo() {
           console.error('Error deleting document:', error);
         });
       }
+
+      if (file.fileName.substring(file.fileName.length - 3) === 'mid') {
+        try {
+          itemRef = ref(storage, 'midiFiles/' + user.uid + "/" + file.fileName);
+        } catch {}
+      } else if (file.fileName.substring(file.fileName.length - 3) === 'svg') {
+        try {
+          itemRef = ref(storage, 'svgFiles/' + user.uid + "/" + file.fileName);
+        } catch {}
+
+        // Delete the document
+        deleteDoc(itemRef)
+        .then(() => {
+          console.log('Document deleted successfully');
+        })
+        .catch((error) => {
+          console.error('Error deleting document:', error);
+        });
+      }
+      
+      
+    }
 
     if (divs.divs !== undefined && divs.divs !== null) {
       listItems = divs.divs.map((doc) =>
@@ -139,7 +136,7 @@ function Demo() {
   async function returnList() {
     var listItems = [];
   
-    if (user != undefined && user != null) {
+    if (user !== undefined && user !== null) {
       try {
   
         const svgRef = collection(firestore, 'users', user.uid, 'svgFiles');
@@ -166,7 +163,7 @@ function Demo() {
   async function returnMIDIList() {
     var listItems = [];
   
-    if (user != undefined && user != null) {
+    if (user !== undefined && user !== null) {
       try {
   
         const svgRef = collection(firestore, 'users', user.uid, 'midiFiles');
@@ -194,13 +191,8 @@ function Demo() {
 
     if (user !== undefined && user !== null) {
       const userDocRef = doc(firestore, 'users', user.uid);
-      var existingInfo;
-      
-      // Fetch the existing data
-      const userDoc = await getDoc(userDocRef);
 
       if (element === "username") {
-        existingInfo = userDoc.data().username || "";
         // Update the Firestore document with the modified array
         await updateDoc(userDocRef, {
           username: input,
@@ -208,7 +200,6 @@ function Demo() {
       }
 
       if (element === "theme") {
-        existingInfo = userDoc.data().theme || "";
         // Update the Firestore document with the modified array
         await updateDoc(userDocRef, {
           theme: input,
@@ -222,9 +213,6 @@ function Demo() {
 
   function ProfileAspects() {
     const [input, setInput] = useState('');
-    if (user !== undefined && user !== null) {
-      const username = user.username;
-    }
     return (
       <div className="pl-8 pr-8 w-full py-6 flex space-y-8 flex-col">
         <p className="text-2xl text-white">Profile Settings</p>
@@ -257,7 +245,6 @@ function Demo() {
   }
 
   function DisplayAspects() {
-    const [input, setInput] = useState('');
     return (
       <div className="pl-8 pr-8 w-full py-6 flex space-y-8 flex-col">
         <p className="text-2xl text-white">Profile Settings</p>
@@ -342,7 +329,7 @@ function Demo() {
   }
 
   useEffect(() => {
-    if (user != null) {
+    if (user !== null) {
       const fetchData = async () => {
         const result = await returnList();
         setSVGDivs(result); // Assuming you have a state variable for divs

@@ -114,7 +114,6 @@ function PlaySound({currentMidi, noPlay}) {
 function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, setNoteSequences, noteSequences }){
 
   const [showResults, setShowResults] = React.useState(false);
-  const [file, setFile] = React.useState(0);
   const [user, setUser] = useState(auth.currentUser);
 
 	const changeHandler = (event) => {
@@ -127,19 +126,7 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
 	};
 
     useEffect(() => {
-      const user = auth.currentUser;
-      if (user !== null) {
-        // The user object has basic properties such as display name, email, etc.
-        const displayName = user.displayName;
-        const email = user.email;
-        const photoURL = user.photoURL;
-        const emailVerified = user.emailVerified;
-
-        // The user's ID, unique to the Firebase project. Do NOT use
-        // this value to authenticate with your backend server, if
-        // you have one. Use User.getToken() instead.
-        const uid = user.uid;
-      }
+      setUser(auth.currentUser)
       
     }, [user]);
 
@@ -209,10 +196,6 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
       }
     }
   };
-  
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [outputNoteSequences, setOutputNoteSequences] = useState(null);
 
   useEffect(() => {
     function fetchAndParseMIDIFile() {
@@ -226,14 +209,9 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
             });
             return newNoteSequences;
           });
-  
-          // Update state to stop loading
-          setLoading(false);
         }
       } catch (error) {
         console.error('Error:', error);
-        setError(error);
-        setLoading(false);
       }
     }
   
@@ -242,7 +220,6 @@ function FileUploadPage({ selectedFile, setSelectedFile, setFileJSON, fileJSON, 
 
   const parseMidiToNoteSequence = (track) => {
     const noteSequence = new mm.NoteSequence();
-    const { header } = track;
     var ticksPerQuarter = 4;
     // if (header.ticksPerBeat != null) {
     //   ticksPerQuarter = header.ticksPerBeat;

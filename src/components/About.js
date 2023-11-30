@@ -23,7 +23,7 @@ function About() {
         </div>
         <div className="-ml-48 -mt-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
           <img className="w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]" src={webHome} alt="" width="2432" height="1442"/>
-        </div>
+        </div> 
         <div className="-ml-48 -mt-12 p-12 pt-[575px] lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
           <img className="w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]" src={processed} alt="" width="2432" height="1442"/>
         </div>
@@ -31,7 +31,7 @@ function About() {
           <div className="lg:pr-4">
             <div className="max-w-xl text-base leading-7 text-gray-300 text-xl">
               <p>After the file has been processed, the sceen should now populate with the individual tracks contained within your uploaded file. You can play and save the overall midi file to your account if created. Now refer to the list to see how you can process that information now.</p>
-              <ul role="list" className="mt-8 space-y-8 text-gray-400">
+              <ul className="mt-8 space-y-8 text-gray-400">
                 <li className="flex gap-x-3">
                   <svg className="mt-1 h-5 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fillRule="evenodd" d="M5.5 17a4.5 4.5 0 01-1.44-8.765 4.5 4.5 0 018.302-3.046 3.5 3.5 0 014.504 4.272A4 4 0 0115 17H5.5zm3.75-2.75a.75.75 0 001.5 0V9.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l1.95-2.1v4.59z" clipRule="evenodd" />

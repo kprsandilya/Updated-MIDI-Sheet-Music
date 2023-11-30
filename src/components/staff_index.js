@@ -18,19 +18,7 @@ const DownloadSVG = ({ svgContent, fileName }) => {
   };
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user !== null) {
-      // The user object has basic properties such as display name, email, etc.
-      const displayName = user.displayName;
-      const email = user.email;
-      const photoURL = user.photoURL;
-      const emailVerified = user.emailVerified;
-
-      // The user's ID, unique to the Firebase project. Do NOT use
-      // this value to authenticate with your backend server, if
-      // you have one. Use User.getToken() instead.
-      const uid = user.uid;
-    }
+    setUser(auth.currentUser)
     
   }, [user]);
 
@@ -120,10 +108,8 @@ const MidiVisualizerComponent = ({ noteSequences, number, fileName }) => {
   const gainNodeRef = useRef(null); // Ref for the GainNode
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [isStopped, setIsStopped] = useState(false);
   const [svg, setSVG] = useState(null);
   const [tempo, setTempo] = useState(120); // Initial tempo value is set to 120 BPM
-  const [alertUp, setAlert] = useState(false);
   const parsedNoteSequence = noteSequences[number];
 
   useEffect(() => {
@@ -199,13 +185,11 @@ const MidiVisualizerComponent = ({ noteSequences, number, fileName }) => {
           player.resume(parsedNoteSequence);
           setIsPlaying(true);
           setIsPaused(false);
-          setIsStopped(false);
         } else {
           try {
             player.start(parsedNoteSequence);
             setIsPlaying(true);
             setIsPaused(false);
-            setIsStopped(true);
           } catch (err) {
             console.log(err);
             window.alert('Stop one track before starting another!');
@@ -230,7 +214,6 @@ const MidiVisualizerComponent = ({ noteSequences, number, fileName }) => {
       player.stop();
       setIsPlaying(false);
       setIsPaused(false);
-      setIsStopped(true);
       Tone.Transport.stop();
     }
   };
