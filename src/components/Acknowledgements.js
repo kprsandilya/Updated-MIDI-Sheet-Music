@@ -4,8 +4,7 @@ import "../input.css";
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
 import HeroPattern from "./HeroPattern.js";
-
-//https://www.freecodecamp.org/news/use-firebase-authentication-in-a-react-app/
+import MIDILogo from "../Harp MIDI Logo.svg";
 
 function Acknowledgements() {
     return(
@@ -41,34 +40,47 @@ function TailWindAcknowledgements() {
     <section className="relative isolate overflow-hidden px-6 py-24 sm:py-32 lg:px-8">
       <div className="absolute"></div>
         <div className="absolute shadow-xl shadow-indigo-600/10 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
-        <div className="mx-auto max-w-2xl lg:max-w-4xl">
-          <img className="mx-auto h-12" src="https://tailwindui.com/img/logos/workcation-logo-indigo-600.svg" alt=""/>
+        <div className="mx-auto max-w-2xl lg:max-w-4xl flex items-center flex-col">
+          <div className="w-1/3 text-indigo-600 flex flex-row">
+            <div className="w-1/6"></div>
+            <img className="mx-auto h-12 w-1/6" src={MIDILogo} alt=""></img>
+            <p className="pt-3 font-bold items-start w-6/12">MIDI Sheet Music</p>
+            <div className="w-1/6"></div>
+          </div>
           <figure className="mt-10">
-            <blockquote className="text-center text-xl font-semibold leading-8 text-gray-900 sm:text-2xl sm:leading-9">
-              <p>“Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo expedita voluptas culpa sapiente alias molestiae. Numquam corrupti in laborum sed rerum et corporis.”</p>
+            <blockquote className="text-center text-xl font-semibold leading-8 text-gray-200 sm:text-2xl sm:leading-9">
+              <p>Thank You for Using This Application</p>
             </blockquote>
             <figcaption className="mt-10">
-              <img className="mx-auto h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+              <img className="mx-auto h-10 w-10 rounded-full border-2 border-black" src={MIDILogo} alt=""/>
               <div className="mt-4 flex items-center justify-center space-x-3 text-base">
-                <div className="font-semibold text-gray-900">Judith Black</div>
+                <div className="font-semibold text-gray-300">Sandilya Kambhampati</div>
                 <svg viewBox="0 0 2 2" width="3" height="3" aria-hidden="true" className="fill-gray-900">
                   <circle cx="1" cy="1" r="1" />
                 </svg>
-                <div className="text-gray-600">CEO of Workcation</div>
+                <div className="text-gray-400">Creator of the Website</div>
               </div>
             </figcaption>
           </figure>
         </div>
       </section>
       <div className="py-24 sm:py-32 bg-slate-500/5 ">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <h2 className="text-center text-lg font-semibold leading-8 text-gray-400">With great help from these sources</h2>
-          <div className="mx-auto mt-10 grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
-            <img className="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/transistor-logo-gray-900.svg" alt="Transistor" width="158" height="48"/>
-            <img className="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/reform-logo-gray-900.svg" alt="Reform" width="158" height="48"/>
-            <img className="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/tuple-logo-gray-900.svg" alt="Tuple" width="158" height="48"/>
-            <img className="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/savvycal-logo-gray-900.svg" alt="SavvyCal" width="158" height="48"/>
-            <img className="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/statamic-logo-gray-900.svg" alt="Statamic" width="158" height="48"/>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col">
+          <h2 className="text-center text-2xl font-semibold leading-8 text-gray-200">With great help from these sources</h2>
+          <div className="flex items-center justify-center pt-12 space-x-24 flex-row">
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://heropatterns.com/"> HeroPatterns</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://hypercolor.dev/"> HyperColor</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://tonejs.github.io/Midi/"> ToneJS</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://magenta.github.io/magenta-js/music/"> MagentaJS</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://firebase.google.com/"> FireBase</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://www.freecodecamp.org/news/use-firebase-authentication-in-a-react-app/"> FreeCodeCamp</a>
+          </div>
+          <div className="flex items-center justify-center pt-12 space-x-24 flex-row">
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://chat.openai.com/"> ChatGPT</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://www.robinwieruch.de/react-dropdown/"> rw;eruh</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://tonejs.github.io/Midi/"> ToneJS</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://magenta.github.io/magenta-js/music/"> MagentaJS</a>
+            <a className="max-h-12 object-contain text-2xl text-slate-400 border-2" href="https://firebase.google.com/"> FireBase</a>
           </div>
         </div>
       </div>

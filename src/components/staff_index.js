@@ -3,13 +3,11 @@ import * as Tone from 'tone';
 import * as mm from '@magenta/music';
 import * as ssv from './staff_svg_visualizer.ts'; // Import your staff_svg_visualizer module
 import { saveAs } from 'file-saver';
-import { PDFDownloadLink, Document, Page, Image, Text } from '@react-pdf/renderer';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { addDoc, collection, doc, setDoc, getDoc, updateDoc } from "@firebase/firestore";
-import { firestore, FieldValue, storage, storageRef } from '../firebase_setup/firebase';
+import { addDoc, collection,  updateDoc } from "@firebase/firestore";
+import { firestore, storage } from '../firebase_setup/firebase';
 import { auth } from '../firebase_setup/firebase';
 import SvgParser from "./svgParser.js";
-import Alert from '@mui/material/Alert';
 
 const DownloadSVG = ({ svgContent, fileName }) => {
   const [user, setUser] = useState(auth.currentUser);

@@ -8,7 +8,6 @@ import Application from "./components/Application.js";
 import ProfileSettings from "./components/User/Settings.js";
 import Signup from "./firebase_setup/firebaseauth.js";
 import Login from "./firebase_setup/firebaselogin.js";
-import { useState, useEffect } from 'react';
 
 function App() {
 

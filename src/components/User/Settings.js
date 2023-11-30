@@ -8,10 +8,10 @@ import { Text } from '@mantine/core';
 import NavBar from "../NavBar.js";
 import Footer from "../Footer.js";
 import HeroPattern from "../HeroPattern";
-import { collection, getDocs, query, doc, deleteDoc, getDoc, updateDoc } from "@firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, getDoc, updateDoc } from "@firebase/firestore";
 import { firestore } from '../../firebase_setup/firebase';
 import { auth } from '../../firebase_setup/firebase';
-import { getStorage, ref, deleteObject } from "firebase/storage";
+import { getStorage, ref } from "firebase/storage";
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 

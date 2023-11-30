@@ -4,7 +4,6 @@ import MIDILogo from "../Harp MIDI Logo.svg";
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
 import { HashLink as Link } from 'react-router-hash-link';
-import firebase from 'firebase/app';
 import { auth } from '../firebase_setup/firebase';
 
 function NavBar() {
