@@ -68,49 +68,58 @@ function Demo() {
 
     async function deleteFile(file) {
       const storage = getStorage();
-      var itemRef;
-      var firestoreRef;
-
-      // Create a reference to the file to delete
+      let itemRef;
+      let firestoreRef;
+    
+      // Create references based on file type
       if (file.fileName.substring(file.fileName.length - 3) === 'mid') {
         try {
           firestoreRef = doc(firestore, 'users', user.uid, 'midiFiles', file.id);
-        } catch {}
+        } catch (error) {
+          console.error('Error creating Firestore reference:', error);
+          return;
+        }
       } else if (file.fileName.substring(file.fileName.length - 3) === 'svg') {
         try {
           firestoreRef = doc(firestore, 'users', user.uid, 'svgFiles', file.id);
-        } catch {}
-
-        // Delete the document
-        deleteDoc(firestoreRef)
-        .then(() => {
-          console.log('Document deleted successfully');
-        })
-        .catch((error) => {
-          console.error('Error deleting document:', error);
-        });
+        } catch (error) {
+          console.error('Error creating Firestore reference:', error);
+          return;
+        }
       }
-
+    
+      // Delete the document from Firestore
+      try {
+        await deleteDoc(firestoreRef);
+        console.log('Firestore document deleted successfully');
+      } catch (error) {
+        console.error('Error deleting Firestore document:', error);
+      }
+    
+      // Create references for Firebase Storage based on file type
       if (file.fileName.substring(file.fileName.length - 3) === 'mid') {
         try {
           itemRef = ref(storage, 'midiFiles/' + user.uid + "/" + file.fileName);
-        } catch {}
+        } catch (error) {
+          console.error('Error creating Storage reference:', error);
+          return;
+        }
       } else if (file.fileName.substring(file.fileName.length - 3) === 'svg') {
         try {
           itemRef = ref(storage, 'svgFiles/' + user.uid + "/" + file.fileName);
-        } catch {}
-
-        // Delete the document
-        deleteDoc(itemRef)
-        .then(() => {
-          console.log('Document deleted successfully');
-        })
-        .catch((error) => {
-          console.error('Error deleting document:', error);
-        });
+        } catch (error) {
+          console.error('Error creating Storage reference:', error);
+          return;
+        }
       }
-      
-      
+    
+      // Delete the file from Firebase Storage
+      try {
+        await deleteDoc(itemRef);
+        console.log('Storage file deleted successfully');
+      } catch (error) {
+        console.error('Error deleting Storage file:', error);
+      }
     }
 
     if (divs.divs !== undefined && divs.divs !== null) {
