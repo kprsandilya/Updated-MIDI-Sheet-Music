@@ -151,6 +151,8 @@ const MidiVisualizerComponent = ({ noteSequences, number, fileName }) => {
 
       playerRef.current = player;
 
+      console.log(player);
+
       // Set initial tempo
       const initialTempo = parsedNoteSequence.tempos[0].qpm;
       player.setTempo(initialTempo);
@@ -165,6 +167,7 @@ const MidiVisualizerComponent = ({ noteSequences, number, fileName }) => {
       gainNodeRef.current = gainNode; // Save the GainNode in the ref
 
       player.polySynth.options.volume = 50;
+      player.polySynth.output._unmutedVolume = 50;
       // Cleanup when component unmounts
       return () => {
         player.stop();

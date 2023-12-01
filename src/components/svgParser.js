@@ -7,8 +7,6 @@ import {
   StyleSheet, View
 } from "@react-pdf/renderer";
 
-const PAGE_SIZE = "A4"; // You can change this to the desired page size
-
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",

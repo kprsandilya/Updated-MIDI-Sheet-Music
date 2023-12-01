@@ -25,7 +25,7 @@ function NavBar() {
 
     return (
       <>
-      <nav className="flex items-center justify-between flex-wrap bg-slate-400 p-4 h-18 sticky top-0 z-50">
+      <nav className="flex items-center justify-between flex-wrap bg-gray-800 p-4 h-18 sticky top-0 z-50 text-gray-200">
         <div className="flex items-center flex-shrink-0 text-white mr-6">
           <img src={MIDILogo} alt="MIDI Logo" className="fill-current h-12 w-12 mr-2" width="54" height="54" viewBox="0 0 54 54"/>
           <span className="font-semibold text-xl tracking-tight">MIDI Sheet Music</span>
@@ -36,11 +36,11 @@ function NavBar() {
           </button>
         </div>
         <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-          <div className="text-sm lg:flex-grow space-x-6">
-            <Link to="/"> Home </Link>
-            <Link to="/about"> About </Link>
-            <Link to="/application"> Application </Link>
-            <Link to="/acknowledgements"> Acknowledgements </Link>
+          <div className="text-sm lg:flex-grow space-x-6 flex flex-row pt-2 text-center space-x-12">
+            <div className="hover:rounded text-center h-8 w-24 hover:bg-gray-600 pt-1"><Link to="/" className=""> Home </Link></div>
+            <div className="hover:rounded text-center h-8 w-24 hover:bg-gray-600 pt-1"><Link to="/about" className=""> About </Link></div>
+            <div className="hover:rounded text-center h-8 w-24 hover:bg-gray-600 pt-1"><Link to="/application" className=""> Application </Link></div>
+            <div className="hover:rounded text-center h-8 w-36 hover:bg-gray-600 pt-1"><Link to="/acknowledgements" className=""> Acknowledgements </Link></div>
           </div>
         </div>
         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -77,22 +77,22 @@ function NavBar() {
               <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <Menu.Item>
                   {({ active }) => (
-                    <Link to="/profile/settings/?tab=profile" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-1"> Profile </Link>
+                    <Link to="/profile/settings/?tab=profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400" role="menuitem" tabIndex="-1" id="user-menu-item-1"> Profile </Link>
                   )}
                 </Menu.Item>
                 <Menu.Item>
                   {({ active }) => (
-                    <Link to="/profile/settings/?tab=display" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-1"> Display Settings </Link>
+                    <Link to="/profile/settings/?tab=display" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400" role="menuitem" tabIndex="-1" id="user-menu-item-1"> Display Settings </Link>
                   )}
                 </Menu.Item>
                 <Menu.Item>
                   {({ active }) => (
-                    <Link to="/profile/settings/?tab=file" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-1"> File Management </Link>
+                    <Link to="/profile/settings/?tab=file" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400" role="menuitem" tabIndex="-1" id="user-menu-item-1"> File Management </Link>
                   )}
                 </Menu.Item>
                 <Menu.Item>
                   {({ active }) => (
-                    <button className="block px-4 py-2 text-sm text-gray-700" onClick={signOut}> Sign Out </button>
+                    <button className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 w-full flex items-start" onClick={signOut}> Sign Out </button>
                   )}
                 </Menu.Item>
               </Menu.Items>
