@@ -17,13 +17,12 @@ var totalJSON;
 var totalSynths = [];
 var indSynths = [];
 
-//This week
-//Add svg of staff to account and allow download
-//Tab stuff
+//Future
+//Add/Save individual track midi files
 
-//Display individual midi files for download
-//Firebase accounts
-  //Save midi files/documents
+//Known Issues
+//When user is logged in and reloads the page, the sign in/login is still visible
+//PDF Uploading and Saving and Processing
 
 function TotalPlay({currentMidi, noPlay}) {
   function handleClick() {
